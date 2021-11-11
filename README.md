@@ -8,5 +8,5 @@
 ##### YU JIN HER, Department of Information System
 ##### EO JIN LEE, Department of Information System
 ----------
-## Details
+## ✨ Details
 
