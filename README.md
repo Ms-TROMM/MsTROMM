@@ -1,5 +1,5 @@
 # 🖥️ Ms.TROMM
-### Wise Secretary who Always Thinks of You: 
+### Wise Secretary Always Thinking about You: 
 ### Artificial Intelligence-based Recommendation Software using Stylers and Smart Mirror
 ----------
 ## 🔥 Contributors
