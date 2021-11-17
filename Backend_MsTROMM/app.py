@@ -4,12 +4,16 @@ import urllib
 import json
 
 app = Flask(__name__)
- 
+
+
+# POST 방식 예시
 @app.route('/userLogin', methods = ['POST'])
 def userLogin():
     user = request.get_json()   # json 데이터를 받아옴
     return jsonify(user)    # 받아온 데이터를 다시 전송
  
+ 
+# GET 방식 예시
 @app.route('/environments/<language>')
 def environments(language):
     return jsonify({"language":language})
