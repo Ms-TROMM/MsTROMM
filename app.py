@@ -6,7 +6,6 @@ import datetime
 
 app = Flask(__name__)
 
-
 # POST 방식 예시
 @app.route('/userLogin', methods = ['POST'])
 def userLogin():
@@ -24,7 +23,7 @@ def environments(language):
 @app.route('/weather/<city>',methods = ['POST'])
 def getNowCity(city) :
     openweather_api_url = "https://api.openweathermap.org/data/2.5/"
-    service_key = "TOKEN"
+    service_key = "0d3cc914979c6be87b62d144d6daf203"
 
     # API 요청시 필요한 인수값 정의
     ow_api_url = openweather_api_url + "weather"
@@ -63,12 +62,6 @@ def getNowCity(city) :
     # print("일몰 : %r " % items['sys']['sunset'])
     # print("============================")
     return items
-
-@app.route('/date',methods = ['POST'])
-def Time():
-    now = datetime.datetime.now()
-    now_dict = {"a":now.strftime("%a"),"month":now.strftime("%b"),"day":now.strftime("%d")}
-    return jsonify(now_dict)
 
 
 if __name__ == "__main__":
