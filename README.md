@@ -37,6 +37,7 @@ pip3 install -r requirements.txt
 
 ```
 
+
 - https://flask.palletsprojects.com/en/2.0.x/tutorial/factory/#run-the-application 에 나와있는대로 환경변수 설정 
 
 ```shell 
@@ -53,6 +54,14 @@ $ flask run
 > flask run
 ```
 
+
+- DB 초기화 하기 
+
+```shell 
+flask init-db 
+```
+
+
 - 새로운 패키지를 개발 도중에 받은 경우 pip freeze 를 다시 실행해준다.
 
 ```shell 
@@ -60,6 +69,7 @@ $ flask run
 pip3 freeze > requirements.txt 
 
 ```
+
 
 - REST API 를 위한 라이브러리 
     - **flask-restful** : https://flask-restful.readthedocs.io/en/latest/installation.html
