@@ -4,24 +4,11 @@ import urllib
 import json
 import datetime
 import requests
-from flask import render_template
 from werkzeug.exceptions import HTTPException
+# from flask import render_template # 프론트앤드 랜더링 관련 모듈 
 # from flask_restplus import Api, Resource, fields
 
 app = Flask(__name__)
-
-
-# POST 방식 예시
-@app.route('/userLogin', methods = ['POST'])
-def userLogin():
-    user = request.get_json()   # json 데이터를 받아옴
-    return jsonify(user)    # 받아온 데이터를 다시 전송
- 
- 
-# GET 방식 예시
-@app.route('/environments/<language>')
-def environments(language):
-    return jsonify({"language":language})
 
 
 # 날씨 데이터 API 활용(RestfulAPI)
@@ -73,22 +60,133 @@ def getNowCity(city) :
     else:
         return "Status Error"
 
-@app.route('/connection',methods = ['GET'])
+
+@app.route('/device/state/styler',methods = ['GET'])
+def stateOfStyler():
+    waterPercentage = 9
+    if waterPercentage == 100:
+        fullComment = "물이 다 찼습니다! 물을 버려주세요!"
+
+        stylerJson = json.dumps(
+        {
+            'results':[
+                {'waterPercentage':waterPercentage,'comment':
+                    {
+                    'fullComment':fullComment
+                    }
+                }
+                    ]
+        }
+        ,ensure_ascii=False, indent=4)
+    
+    elif waterPercentage < 10:
+        zeroComment = "물이 부족합니다! 물을 채워주세요!"  
+
+        stylerJson = json.dumps(
+        {
+            'results':[
+                {'waterPercentage':waterPercentage,'comment':
+                    {
+                    'zeroComment':zeroComment
+                    }
+                }
+                    ]
+        }
+        ,ensure_ascii=False, indent=4)
+    
+    else:
+        stylerJson = json.dumps(
+        {
+            'results':[
+                {'waterPercentage':waterPercentage}
+                    ]
+        }
+        ,ensure_ascii=False, indent=4)     
+    return stylerJson
+
+
+@app.route('/device/connection',methods = ['GET'])
 def connection():
-    smState = True
-    stState = False
+    smState = True # 스마트미러 상태 불리언 값
+    stState = False # 스타일러 상태 불리언 값 
     statDict = {'smState':smState,'stState':stState}
     return jsonify(statDict)
 
 
 @app.route('/myHouse',methods = ['GET'])
 def myHouse():
-    myHumidity = 60
-    myTemp = 21
-    dehum = True
-    dry = True
-    myHouseDict = dict([('Humidity',myHumidity),('Temp',myTemp),('dehumState',dehum),('dryState',dry)])
-    return jsonify(myHouseDict)  
+    myHumidity = 30
+    myTemp = 21 
+    dehum = False # 실내제습
+    dry = False # 자동건조
+    
+    if (dehum == False) and (myHumidity >= 46):
+        highHum = '지금은 실내 습도가 '+str(myHumidity)+'도로 높은 편이에요. 최적의 습도 기준인 45도로 맞추기 위해 스타일러의 실내제습을 가동시켜드릴까요?'
+        if dry == False :
+            dryComment = '자동건조 기능도 꺼져있으시네요! 빨래들의 빠른 건조를 위해 자동건조 기능도 같이 켜드릴까요?'        
+            myHouseDict = json.dumps(
+            {
+            'results':[
+                {
+                    'condition':{
+                    'Humidity':myHumidity,
+                        'Temp':myTemp
+                    },
+                    'State':{
+                        'dehumState':dehum,
+                        'dryState':dry
+                    },
+                    'comment':{
+                        'humComment':highHum,
+                        'dryComment':dryComment
+                    }
+                }   
+        ]
+            }
+            ,ensure_ascii=False, indent=4)
+            return myHouseDict
+        
+        else:     
+                myHouseDict = json.dumps(
+                {
+                'results':[
+                    {
+                        'condition':{
+                        'Humidity':myHumidity,
+                            'Temp':myTemp
+                        },
+                        'State':{
+                            'dehumState':dehum,
+                            'dryState':dry
+                        },
+                        'comment':{
+                            'humComment':highHum,
+                        }
+                    }   
+            ]
+                }
+                ,ensure_ascii=False, indent=4)
+                return myHouseDict    
+
+    else:
+            myHouseDict = json.dumps(
+            {
+            'results':[
+                {
+                    'condition':{
+                    'Humidity':myHumidity,
+                        'Temp':myTemp
+                    },
+                    'State':{
+                        'dehumState':dehum,
+                        'dryState':dry
+                    }
+                }   
+        ]
+            }
+            ,ensure_ascii=False, indent=4)
+            return myHouseDict  
+            
 
 ### error handler ###
 
@@ -105,5 +203,6 @@ def error_handler(e):
     return response
  
 
+ ### main ###
 if __name__ == "__main__":
     app.run()
