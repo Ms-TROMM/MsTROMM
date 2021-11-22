@@ -4,6 +4,8 @@ import urllib
 import json
 import datetime
 import requests
+from flask import render_template
+from werkzeug.exceptions import HTTPException
 # from flask_restplus import Api, Resource, fields
 
 app = Flask(__name__)
@@ -73,29 +75,35 @@ def getNowCity(city) :
 
 @app.route('/connection',methods = ['GET'])
 def connection():
-    stat_code = 200
-    if stat_code == 200:
-        smState = True
-        stState = False
-        statDict = {'smState':smState,'stState':stState}
-        return jsonify(statDict)
-    else :
-        return "Status Error"
+    smState = True
+    stState = False
+    statDict = {'smState':smState,'stState':stState}
+    return jsonify(statDict)
 
 
 @app.route('/myHouse',methods = ['GET'])
 def myHouse():
-    state_code = 200
-    if state_code == 200:
-        myHumidity = 60
-        myTemp = 21
-        dehum = True
-        dry = True
-        myHouseDict = dict([('Humidity',myHumidity),('Temp',myTemp),('dehumState',dehum),('dryState',dry)])
-        return jsonify(myHouseDict)
-    else :
-        return "Status Error"    
+    myHumidity = 60
+    myTemp = 21
+    dehum = True
+    dry = True
+    myHouseDict = dict([('Humidity',myHumidity),('Temp',myTemp),('dehumState',dehum),('dryState',dry)])
+    return jsonify(myHouseDict)  
 
+### error handler ###
+
+@app.errorhandler(HTTPException)
+def error_handler(e):
+    response = e.get_response()
+
+    response.data = json.dumps({
+        'code': e.code,
+        'msg' : e.name,
+        'desc': e.description,
+    })
+    response.content_type = 'application/json'
+    return response
+ 
 
 if __name__ == "__main__":
     app.run()
