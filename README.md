@@ -76,3 +76,7 @@ pip3 freeze > requirements.txt
     - **blueprint** : https://flask.palletsprojects.com/en/1.1.x/blueprints/
     - 참고 
         - [flask-restful + blueprint](https://dev.to/paurakhsharma/flask-rest-api-part-2-better-structure-with-blueprint-and-flask-restful-2n93)
+
+
+
+- Look up & Control `.sql` files with DataGrip from JetBrains. [Recommendation]
