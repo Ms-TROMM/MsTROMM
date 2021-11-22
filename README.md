@@ -80,3 +80,7 @@ pip3 freeze > requirements.txt
 
 
 - Look up & Control `.sql` files with DataGrip from JetBrains. [Recommendation]
+- After running `flask init-db`, check out the `flaskr.sqlite` file using [DB Browser for SQLite](https://sqlitebrowser.org/)
+
+![DB Browser screen capture](./images/capture1.PNG)
+> dummy data is inserted by executing `dummy_defaults.sql` script.

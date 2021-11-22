@@ -7,6 +7,8 @@ DROP TABLE IF EXISTS schedule;
 DROP TABLE IF EXISTS user_preference;
 DROP TABLE IF EXISTS clothes_combination;
 DROP TABLE IF EXISTS styler_alert; 
+DROP TABLE IF EXISTS clothes_type; 
+DROP TABLE IF EXISTS recommendation_type; 
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
