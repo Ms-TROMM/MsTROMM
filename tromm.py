@@ -1,3 +1,4 @@
+from ssl import _create_default_https_context
 from flask import Flask, request, jsonify
 import urllib.request
 import urllib
@@ -63,6 +64,16 @@ def getNowCity(city) :
     # print("============================")
     return items
 
+closet=dict()
+@app.route('/myCloset/add/<newClothes>',methods = ['POST'])
+def getNewClothes(newClothes) :
+    
+    # 프론트에서(?)클라이언트에서(?) 옷 관련 정보 받아서 closet[newClothes]에 입력하기
+    data = request.get_json()
+    closet[newClothes] = data
+    # -> closet[newClothes] = {"name" : newClothes, "type" : "", "color" : "", "texture" : "", "control" : ""}
+
+    return json.dumps(closet[newClothes])
 
 if __name__ == "__main__":
     app.run()

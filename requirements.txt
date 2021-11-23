@@ -15,3 +15,7 @@ pytz==2021.3
 six==1.16.0
 SQLAlchemy==1.4.27
 Werkzeug==2.0.2
+urllib3==1.26.7
+urllib==2.7.0
+requests==2.26.0
+
