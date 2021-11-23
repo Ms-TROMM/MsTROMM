@@ -5,8 +5,6 @@ import json
 import datetime
 import requests
 from werkzeug.exceptions import HTTPException
-from flask import render_template # 프론트앤드 랜더링 관련 모듈 
-# from flask_restplus import Api, Resource, fields
 
 app = Flask(__name__)
 
