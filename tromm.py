@@ -6,13 +6,10 @@ import json
 import datetime
 import requests
 from werkzeug.exceptions import HTTPException
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 # 날씨 데이터 API 활용(RestfulAPI)
 @app.route('/weather/<city>',methods = ['GET'])
@@ -106,7 +103,7 @@ def stateOfStyler():
         ,ensure_ascii=False, indent=4)     
     return stylerJson
 
-closet=dict()
+
 @app.route('/myCloset/add/<newClothes>',methods = ['POST'])
 def getNewClothes(newClothes) :
     
@@ -116,6 +113,7 @@ def getNewClothes(newClothes) :
     # -> closet[newClothes] = {"name" : newClothes, "type" : "", "color" : "", "texture" : "", "control" : ""}
 
     return json.dumps(closet[newClothes])
+
 
 @app.route('/device/connection',methods = ['GET'])
 def connection():
