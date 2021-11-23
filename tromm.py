@@ -1,20 +1,34 @@
+from __future__ import print_function
 from ssl import _create_default_https_context
+from typing import KeysView
 from flask import Flask, request, jsonify
 import urllib.request
 import urllib
 import json
 import datetime
 import requests
+import os.path
+import csv
+from http import HTTPStatus
 from werkzeug.exceptions import HTTPException
 from flask_sqlalchemy import SQLAlchemy
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 
 app = Flask(__name__)
 
+# api 등 각종 key 값들 읽어오고 저장
+with open('keys.csv','r',encoding='utf-8') as f:
+    reader = csv.DictReader(f)
+    keys = list(reader)
+ 
 # 날씨 데이터 API 활용(RestfulAPI)
 @app.route('/weather/<city>',methods = ['GET'])
 def getNowCity(city) :
     openweather_api_url = "https://api.openweathermap.org/data/2.5/"
-    service_key = "0d3cc914979c6be87b62d144d6daf203"
+    service_key = keys[0]['value']
 
     # API 요청시 필요한 인수값 정의
     ow_api_url = openweather_api_url + "weather"
@@ -196,10 +210,47 @@ def myHouse():
             }
             ,ensure_ascii=False, indent=4)
             return myHouseDict  
-            
+
+
+@app.route('/calendar',methods = ['GET'])
+def calendar():
+    SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+    creds = None
+    
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+
+    service = build('calendar', 'v3', credentials=creds)
+
+    # Call the Calendar API
+    calendar_id = keys[1]['value']
+    time_min = datetime.date.today().isoformat() + 'T00:00:00+09:00'
+    time_max = (datetime.date.today() + datetime.timedelta(days=10)).isoformat() + 'T23:59:59+09:00'
+    max_results = 5
+    is_single_events = True
+    orderby = 'startTime'
+    events_result = service.events().list(calendarId = calendar_id,
+                                        timeMin = time_min,
+                                        timeMax = time_max,
+                                        maxResults = max_results,
+                                        singleEvents = is_single_events,
+                                        orderBy = orderby
+                                        ).execute()
+    return jsonify(events_result)        
+
 
 ### error handler ###
-
 @app.errorhandler(HTTPException)
 def error_handler(e):
     response = e.get_response()
