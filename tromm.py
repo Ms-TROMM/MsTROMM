@@ -8,7 +8,6 @@ import requests
 from werkzeug.exceptions import HTTPException
 from flask_sqlalchemy import SQLAlchemy
 
-
 app = Flask(__name__)
 
 # 날씨 데이터 API 활용(RestfulAPI)
@@ -107,7 +106,8 @@ def stateOfStyler():
 @app.route('/myCloset/add/<newClothes>',methods = ['POST'])
 def getNewClothes(newClothes) :
     
-    # 프론트에서(?)클라이언트에서(?) 옷 관련 정보 받아서 closet[newClothes]에 입력하기
+    # 프론트에서(?)클라이언트에서(?) 옷 관련 정보 받아서 closet[newClothes]에 입력하기!
+    closet={}
     data = request.get_json()
     closet[newClothes] = data
     # -> closet[newClothes] = {"name" : newClothes, "type" : "", "color" : "", "texture" : "", "control" : ""}
