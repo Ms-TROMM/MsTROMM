@@ -1,4 +1,4 @@
-from ..database import db
+from .. main import db
 
 
 class Recommendation(db.Model):

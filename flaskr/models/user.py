@@ -1,4 +1,4 @@
-from ..database import db
+from ..main import db, ma
 
 
 class User(db.Model):
@@ -38,3 +38,11 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
         return self
+
+
+#  This class inherits from ma.ModelSchema and gives the PersonSchema class Marshmallow features,
+#  like introspecting the Person class to help serialize/deserialize instances of that class.
+class UserSchema(ma.ModelSchema):
+    class Meta:
+        model = User
+        sqla_session = db.session

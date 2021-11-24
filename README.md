@@ -49,18 +49,10 @@ $ flask run
 
 # Windows 
 
-> $env:FLASK_APP = "flaskr"
-> $env:FLASK_ENV = "development"
-> flask run
+$env:FLASK_APP = "flaskr"
+$env:FLASK_ENV = "development"
+flask run
 ```
-
-
-- DB 초기화 하기 
-
-```shell 
-flask init-db 
-```
-
 
 - 새로운 패키지를 개발 도중에 받은 경우 pip freeze 를 다시 실행해준다.
 
@@ -70,28 +62,10 @@ pip3 freeze > requirements.txt
 
 ```
 
-
-- REST API 를 위한 라이브러리 
-    - **flask-restful** : https://flask-restful.readthedocs.io/en/latest/installation.html
-    - **blueprint** : https://flask.palletsprojects.com/en/1.1.x/blueprints/
-    - 참고 
-        - [flask-restful + blueprint](https://dev.to/paurakhsharma/flask-rest-api-part-2-better-structure-with-blueprint-and-flask-restful-2n93)
-
-
-
-- Look up & Control `.sql` files with DataGrip from JetBrains. [Recommendation]
-- After running `flask init-db`, check out the `flaskr.sqlite` file using [DB Browser for SQLite](https://sqlitebrowser.org/)
-
-![DB Browser screen capture](./images/capture1.png)
-> dummy data is inserted by executing `dummy_defaults.sql` script.
-
-
 ---
 
 ### Heroku 
 
 - Created cleardb-fitted-66992 as CLEARDB_DATABASE_URL
-- CLEARDB_DATABASE_URL: mysql://ba6c43cb33b3be:98d7361c@us-cdbr-east-04.cleardb.com/heroku_870d88d6d1feab7?reconnect=true
-FLASK_APP:            "flaskr"
-FLASK_ENV:            "development"
+
 

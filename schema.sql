@@ -84,6 +84,7 @@ CREATE TABLE clothes_combination (
 CREATE TABLE schedule (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   user_id INTEGER NOT NULL,
+  title VARCHAR NOT NULL,
   description VARCHAR(255) NOT NULL, 
   datetime TIMESTAMP NOT NULL,
   FOREIGN KEY (user_id) REFERENCES user (id)

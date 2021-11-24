@@ -1,4 +1,4 @@
-from ..database import db
+from .. main import db
 
 
 class Control(db.Model):
@@ -28,3 +28,18 @@ class Control(db.Model):
 #   dehumification INTEGER NULL DEFAULT 0, 
 #   indoor_dehumification INTEGER DEFAULT 0 
 # );
+
+
+# Note how we never defined a __init__ method on the User class?
+# That’s because SQLAlchemy adds an implicit constructor to all model classes
+# which accepts keyword arguments for all its columns and relationships.
+# If you decide to override the constructor for any reason,
+# make sure to keep accepting **kwargs and call the super constructor with
+# those **kwargs to preserve this behavior:
+#
+# class Foo(db.Model):
+#     # ...
+#     def __init__(self, **kwargs):
+#         super(Foo, self).__init__(**kwargs)
+#         # do custom stuff
+#
