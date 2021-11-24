@@ -90,3 +90,10 @@ ENV/
 
 # Idea 
 .idea/
+
+# token
+credentials.json
+token.json
+
+# keys
+keys.csv
