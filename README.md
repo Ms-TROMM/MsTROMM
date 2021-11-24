@@ -84,3 +84,14 @@ pip3 freeze > requirements.txt
 
 ![DB Browser screen capture](./images/capture1.png)
 > dummy data is inserted by executing `dummy_defaults.sql` script.
+
+
+---
+
+### Heroku 
+
+- Created cleardb-fitted-66992 as CLEARDB_DATABASE_URL
+- CLEARDB_DATABASE_URL: mysql://ba6c43cb33b3be:98d7361c@us-cdbr-east-04.cleardb.com/heroku_870d88d6d1feab7?reconnect=true
+FLASK_APP:            "flaskr"
+FLASK_ENV:            "development"
+
