@@ -6,8 +6,8 @@ class Schedule(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    title = db.Column(db.String)
-    description = db.Column(db.String)
+    title = db.Column(db.String(100))
+    description = db.Column(db.String(255))
     datetime = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     def create(self):

@@ -29,13 +29,21 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+########## DO NOT DELETE THESE IMPORT STATEMENTS ###########
+from flaskr.models.user import User
+from flaskr.models.clothes import Clothes
+from flaskr.models.scent import Scent
+from flaskr.models.clothes_combination import ClothesCombination
+from flaskr.models.control import Control
+from flaskr.models.recommendation import Recommendation
+from flaskr.models.schedule import Schedule
+from flaskr.models.styler_alert import StylerAlert
+from flaskr.models.user_preference import UserPreference
+from flaskr.models.styler import Styler
+from flaskr.models.mirror import Mirror
+db.create_all()
 
 
 @app.route('/')
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
-
-

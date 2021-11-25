@@ -1,8 +1,8 @@
 from ..main import db
 
 
-class Clothes(db.Model):
-    __tablename__ = 'clothes'
+class StylerAlert(db.Model):
+    __tablename__ = 'styler_alert'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
