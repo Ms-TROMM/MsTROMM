@@ -1,6 +1,6 @@
 # 🖥️ Ms.TROMM
 ### Wise Secretary Always Thinking about You: 
-### Artificial Intelligence-based Recommendation Software using Stylers and Smart Mirror
+### Artificial Intelligence-based Recommendation Software using Styler and Smart Mirror
 ----------
 ## 🔥 Contributors
 ##### JIN HO KIM, Department of Information System
