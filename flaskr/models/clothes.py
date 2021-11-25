@@ -19,8 +19,11 @@ class Clothes(db.Model):
     name = db.Column(db.String)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     stylered_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    need_styler = db.Column(db.Integer, default=0)
+    need_styler = db.Column(db.Integer, default=0) # if the clothes needs to be in styler,
+    # this value is set to 1, otherwise 0
     is_inside_styler = db.Column(db.Integer, default=0)
+    color = db.Column(db.Integer) # Must convert hexadecimal color value to integer before inserting into database
+    texture = db.Column(db.String)
 
     def create(self):
         db.session.add(self)
