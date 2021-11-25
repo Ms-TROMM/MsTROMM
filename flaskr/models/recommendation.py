@@ -1,4 +1,13 @@
-from .. main import db
+import enum
+
+from ..main import db
+
+
+class RecommendationType(enum.Enum):
+    today = 0
+    control = 1
+    scent = 2
+    clothes = 3
 
 
 class Recommendation(db.Model):
@@ -8,7 +17,7 @@ class Recommendation(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     scent_id = db.Column(db.Integer, db.ForeignKey('scent.id'), nullable=False)
-    recommendation_type_id = db.Column(db.Integer, db.ForeignKey('recommendation_type.type_id'))
+    recommendation_type_id = db.Column(db.Enum(RecommendationType))
     schedule_id = db.Column(db.Integer, db.ForeignKey('schedule.id'), nullable=True)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(255), nullable=True)

@@ -1,26 +1,14 @@
-import enum
-
 from ..main import db
-
-
-class ClothesType(enum.Enum):
-    top = 0
-    down = 1
-    outwear = 2
-    onepiece = 3
 
 
 class Clothes(db.Model):
     __tablename__ = 'clothes'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    clothes_type = db.Column(db.Enum(ClothesType))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    stylered_at = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    need_styler = db.Column(db.Integer, default=0)
-    is_inside_styler = db.Column(db.Integer, default=0)
 
     def create(self):
         db.session.add(self)
