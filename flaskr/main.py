@@ -1,8 +1,9 @@
 import connexion
+from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-import os
+
+from flaskr.settings import CLEARDB_DATABASE_URL
 
 connexion_app = connexion.App(__name__, specification_dir='./')
 
@@ -18,10 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 # Database URL received from heroku
-if app.debug:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('CLEARDB_DATABASE_URL')
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('CLEARDB_DATABASE_URL', None)
+app.config['SQLALCHEMY_DATABASE_URI'] = CLEARDB_DATABASE_URL
 
 #  The db variable is what’s imported into the build_database.py
 #  program to give it access to SQLAlchemy and the database.

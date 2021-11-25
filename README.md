@@ -37,22 +37,19 @@ pip3 install -r requirements.txt
 
 ```
 
+- `.env` 파일 만들어서 환경변수 설정. `settings.py` 파일에서도 아래의 환경변수에서 DB 주소를 읽어온다. 
 
-- https://flask.palletsprojects.com/en/2.0.x/tutorial/factory/#run-the-application 에 나와있는대로 환경변수 설정 
-
-```shell 
-# Mac 
-
-$ export FLASK_APP=flaskr
-$ export FLASK_ENV=development
-$ flask run
-
-# Windows 
-
-$env:FLASK_APP = "flaskr"
-$env:FLASK_ENV = "development"
-flask run
 ```
+# .env 파일 내부에 작성 
+
+DEBUG=True
+FLASK_ENV=development
+FLASK_APP=wsgi
+
+CLEARDB_DATABASE_URL=mysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE NAME}
+# database uri should not be exposed to public, contact the team for exact uri. 
+```
+
 
 - 새로운 패키지를 개발 도중에 받은 경우 pip freeze 를 다시 실행해준다.
 
@@ -62,10 +59,8 @@ pip3 freeze > requirements.txt
 
 ```
 
----
-
 ### Heroku 
 
-- Created cleardb-fitted-66992 as CLEARDB_DATABASE_URL
+- main 브랜치에 푸시하면 바로 API 가 배포될 수 있는 옵션 존재. 지금은 꺼져있는 상태임. 
 
 
