@@ -37,7 +37,7 @@ pip3 install -r requirements.txt
 
 ```
 
-- `.env` 파일 만들어서 환경변수 설정. `settings.py` 파일에서도 아래의 환경변수에서 DB 주소를 읽어온다. 
+- 프로젝트 폴더 밑에 `.env` 파일 만들어서 환경변수 설정. `settings.py` 파일에서도 아래의 환경변수에서 DB 주소를 읽어온다. 
 
 ```
 # .env 파일 내부에 작성 
