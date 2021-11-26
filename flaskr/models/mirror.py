@@ -1,7 +1,5 @@
 from ..main import db
 from marshmallow import Schema, fields
-from sqlalchemy import *
-
 
 
 class Mirror(db.Model):
@@ -12,7 +10,6 @@ class Mirror(db.Model):
     
     def __init__(self, connection):
         self.connection = connection
-              
 
     def create(self):
         db.session.add(self)

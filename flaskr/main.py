@@ -4,7 +4,6 @@ from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify
 from marshmallow import Schema, fields, pprint
-
 from flaskr.settings import CLEARDB_DATABASE_URL
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -47,15 +46,10 @@ db.create_all()
 
 
 
-@app.route('/')
-def root():
-    return '<h1>Welcome to ms-tromm API</h1>'
-
-
 @app.route('/connection/mirror',methods = ['GET'])
 def connection():
     # 값 넣어주기
-    # new_Mirror = Mirror(connection=0).create()
+    new_Mirror = Mirror(connection=0).create()
     
     # filtering : id가 100인 쿼리 찾기
     new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
@@ -64,3 +58,8 @@ def connection():
     schema = MirrorSchema()
     result = schema.dump(new_Mirror)
     return result
+
+
+@app.route('/')
+def root():
+    return '<h1>Welcome to ms-tromm API</h1>'
