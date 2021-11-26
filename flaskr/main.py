@@ -2,6 +2,8 @@ import connexion
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, jsonify
+from marshmallow import Schema, fields, pprint
 
 from flaskr.settings import CLEARDB_DATABASE_URL
 
@@ -40,10 +42,25 @@ from flaskr.models.schedule import Schedule
 from flaskr.models.styler_alert import StylerAlert
 from flaskr.models.user_preference import UserPreference
 from flaskr.models.styler import Styler
-from flaskr.models.mirror import Mirror
+from flaskr.models.mirror import Mirror,MirrorSchema
 db.create_all()
+
 
 
 @app.route('/')
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
+
+
+@app.route('/connection/mirror',methods = ['GET'])
+def connection():
+    # 값 넣어주기
+    # new_Mirror = Mirror(connection=0).create()
+    
+    # filtering : id가 100인 쿼리 찾기
+    new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
+    
+    # schema
+    schema = MirrorSchema()
+    result = schema.dump(new_Mirror)
+    return result
