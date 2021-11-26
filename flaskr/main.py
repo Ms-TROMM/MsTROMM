@@ -1,10 +1,14 @@
 import connexion
+import json
+import datetime
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify
 from marshmallow import Schema, fields, pprint
+from http import HTTPStatus
 from flaskr.settings import CLEARDB_DATABASE_URL
+from werkzeug.exceptions import HTTPException
 
 connexion_app = connexion.App(__name__, specification_dir='./')
 
@@ -63,3 +67,17 @@ def connection():
 @app.route('/')
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
+
+
+### error handler ###
+@app.errorhandler(HTTPException)
+def error_handler(e):
+    response = e.get_response()
+
+    response.data = json.dumps({
+        'code': e.code,
+        'msg' : e.name,
+        'desc': e.description,
+    })
+    response.content_type = 'application/json'
+    return response
