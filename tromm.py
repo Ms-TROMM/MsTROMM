@@ -115,7 +115,7 @@ def stateOfStyler():
     return stylerJson
 
 
-@app.route('/myCloset/add/<newClothes>',methods = ['POST'])
+@app.route('/myCloset/add/<newClothes>',methods = ['GET'])
 def getNewClothes(newClothes) :
     
     # 프론트에서 옷 관련 정보 받아서 closet[newClothes]에 입력하기
