@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentia
+from google.oauth2.credentials import Credentials
 app = Flask(__name__)
 
 # api 등 각종 key 값들 읽어오고 저장
@@ -118,7 +118,7 @@ def stateOfStyler():
 @app.route('/myCloset/add/<newClothes>',methods = ['POST'])
 def getNewClothes(newClothes) :
     
-    # 프론트에서(?)클라이언트에서(?) 옷 관련 정보 받아서 closet[newClothes]에 입력하기!
+    # 프론트에서 옷 관련 정보 받아서 closet[newClothes]에 입력하기
     closet={}
     data = request.get_json()
     closet[newClothes] = data
