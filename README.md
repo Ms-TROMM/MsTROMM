@@ -1,6 +1,6 @@
 # 🖥️ Ms.TROMM
 ### Wise Secretary Always Thinking about You: 
-### Artificial Intelligence-based Recommendation Software using Stylers and Smart Mirror
+### Artificial Intelligence-based Recommendation Software using Styler and Smart Mirror
 ----------
 ## 🔥 Contributors
 ##### JIN HO KIM, Department of Information System
@@ -37,28 +37,17 @@ pip3 install -r requirements.txt
 
 ```
 
+- 프로젝트 폴더 밑에 `.env` 파일 만들어서 환경변수 설정. `settings.py` 파일에서도 아래의 환경변수에서 DB 주소를 읽어온다. 
 
-- https://flask.palletsprojects.com/en/2.0.x/tutorial/factory/#run-the-application 에 나와있는대로 환경변수 설정 
-
-```shell 
-# Mac 
-
-$ export FLASK_APP=flaskr
-$ export FLASK_ENV=development
-$ flask run
-
-# Windows 
-
-> $env:FLASK_APP = "flaskr"
-> $env:FLASK_ENV = "development"
-> flask run
 ```
+# .env 파일 내부에 작성 
 
+DEBUG=True
+FLASK_ENV=development
+FLASK_APP=wsgi
 
-- DB 초기화 하기 
-
-```shell 
-flask init-db 
+CLEARDB_DATABASE_URL=mysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE NAME}
+# database uri should not be exposed to public, contact the team for exact uri. 
 ```
 
 
@@ -70,17 +59,8 @@ pip3 freeze > requirements.txt
 
 ```
 
+### Heroku 
 
-- REST API 를 위한 라이브러리 
-    - **flask-restful** : https://flask-restful.readthedocs.io/en/latest/installation.html
-    - **blueprint** : https://flask.palletsprojects.com/en/1.1.x/blueprints/
-    - 참고 
-        - [flask-restful + blueprint](https://dev.to/paurakhsharma/flask-rest-api-part-2-better-structure-with-blueprint-and-flask-restful-2n93)
+- main 브랜치에 푸시하면 바로 API 가 배포될 수 있는 옵션 존재. 지금은 꺼져있는 상태임. 
 
 
-
-- Look up & Control `.sql` files with DataGrip from JetBrains. [Recommendation]
-- After running `flask init-db`, check out the `flaskr.sqlite` file using [DB Browser for SQLite](https://sqlitebrowser.org/)
-
-![DB Browser screen capture](./images/capture1.png)
-> dummy data is inserted by executing `dummy_defaults.sql` script.
