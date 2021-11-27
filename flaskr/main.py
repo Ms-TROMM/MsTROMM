@@ -95,6 +95,45 @@ def getWeather(city):
 def weather(city):
     return getWeather(city)
 
+## google calendar API
+@app.route('/calendar',methods = ['GET'])
+def calendar():
+    SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+    creds = None
+    
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+
+    service = build('calendar', 'v3', credentials=creds)
+
+    # Call the Calendar API
+    calendar_id = environ.get('googleCalId')
+    time_min = (datetime.date.today() + datetime.timedelta(days=-100)).isoformat() + 'T00:00:00+09:00'
+    time_max = (datetime.date.today() + datetime.timedelta(days=100)).isoformat() + 'T23:59:59+09:00'
+    max_results = 5
+    is_single_events = True
+    orderby = 'startTime'
+    events_result = service.events().list(calendarId = calendar_id,
+                                        timeMin = time_min,
+                                        timeMax = time_max,
+                                        maxResults = max_results,
+                                        singleEvents = is_single_events,
+                                        orderBy = orderby
+                                        ).execute()
+    return jsonify(events_result)
+
+
 @app.route('/connection/mirror',methods = ['GET'])
 def connection():
     # 값 넣어주기
