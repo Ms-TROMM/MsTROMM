@@ -1,6 +1,14 @@
+from __future__ import print_function
+from ssl import _create_default_https_context
+from typing import KeysView
+import urllib.request
+import urllib
+import requests
+import os.path
 import connexion
 import json
 import datetime
+from os import environ
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -9,6 +17,11 @@ from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+
 
 connexion_app = connexion.App(__name__, specification_dir='./')
 
@@ -49,15 +62,46 @@ from flaskr.models.mirror import Mirror,MirrorSchema
 db.create_all()
 
 
+# 날씨 api 가져오기
+def getWeather(city):
+    openweather_api_url = "https://api.openweathermap.org/data/2.5/"
+    service_key = environ.get('weatherApiKey')
+
+    # API 요청시 필요한 인수값 정의
+    ow_api_url = openweather_api_url + "weather"
+    payload = "?q=" + str(city) + "&" + "appid=" + service_key + "&lang=kr"
+    url_total = ow_api_url + payload
+
+    # API 요청하여 데이터 받기
+    req = urllib.request.urlopen(url_total)
+    res = req.readline()
+    # 받은 값 JSON 형태로 정제하여 반환
+    items = json.loads(res)
+    # print("============================")
+    # print("도시명 : %r" % items['name'])
+    # print("============================")
+    # print("날씨 : %r" % items['weather'][0]['main'])
+    # print("날씨상세 : %r" % items['weather'][0]['description'])
+    # print("============================")
+    # print("현재온도 : %r" % str(int(items['main']['temp'])-273.15))
+    # print("체감온도 : %r" % str(int(items['main']['feels_like'])-273.15))
+    # print("최저온도 : %r" % str(int(items['main']['temp_min'])-273.15))
+    # print("최고온도 : %r" % str(int(items['main']['temp_max'])-273.15))
+    # print("습도 : %r" % items['main']['humidity'])
+    # print("============================")
+    return items
+
+@app.route('/weather/<city>',methods = ['GET'])
+def weather(city):
+    return getWeather(city)
 
 @app.route('/connection/mirror',methods = ['GET'])
 def connection():
     # 값 넣어주기
-    new_Mirror = Mirror(connection=0).create()
+    # new_Mirror = Mirror(connection=0).create()
     
     # filtering : id가 100인 쿼리 찾기
     new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
-    
     # schema
     schema = MirrorSchema()
     result = schema.dump(new_Mirror)
