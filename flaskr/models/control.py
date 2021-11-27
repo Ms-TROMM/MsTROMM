@@ -5,16 +5,32 @@ class Control(db.Model):
     __tablename__ = 'control'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    steril = db.Column(db.Integer, default=0)
+    store = db.Column(db.Integer, default=0)
+    styling = db.Column(db.Integer, default=0)
+    highend = db.Column(db.Integer, default=0)
     steam = db.Column(db.Integer, default=0)
+    finedry = db.Column(db.Integer, default=0)
+    ready = db.Column(db.Integer, default=0)
     refresh = db.Column(db.Integer, default=0)
-    dehumification = db.Column(db.Integer, default=0)
+    dry = db.Column(db.Integer, default=0)
+    autodry = db.Column(db.Integer, default=0)
     indoor_dehumification = db.Column(db.Integer, default=0)
+    reserv = db.Column(db.Integer, default=0)
 
-    def __init__(self, steam, refresh, dehumification, indoor_dehumification):
+    def __init__(self, steril, store, styling, highend, steam, finedry, ready, refresh, dry, autodry, indoor_dehumification, reserv):
+        self.steril = steril
+        self.store = store
+        self.styling = styling
+        self.highend = highend
         self.steam = steam
+        self.finedry = finedry
+        self.ready = ready
         self.refresh = refresh
-        self.dehumification = dehumification
+        self.dry = dry
+        self.autodry = autodry
         self.indoor_dehumification = indoor_dehumification
+        self.reserv = reserv
 
     def create(self):
         db.session.add(self)
