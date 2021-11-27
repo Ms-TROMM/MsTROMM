@@ -9,7 +9,7 @@ class Styler(db.Model):
     connection = db.Column(db.Integer, default=0)
     dehumification_connect = db.Column(db.Integer, default=0)
     dry_connect = db.Column(db.Integer, default=0)
-    dehumification = db.Column(db.Integer, default=0)
+    humidity = db.Column(db.Integer, default=0)
     temperature = db.Column(db.Integer)
 
     def create(self):
