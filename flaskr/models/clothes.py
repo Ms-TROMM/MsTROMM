@@ -1,6 +1,6 @@
 import enum
-
 from ..main import db
+from marshmallow import Schema, fields
 
 
 class ClothesType(enum.Enum):
@@ -24,6 +24,31 @@ class Clothes(db.Model):
     is_inside_styler = db.Column(db.Integer, default=0)
     color = db.Column(db.Integer) # Must convert hexadecimal color value to integer before inserting into database
     texture = db.Column(db.String(50))
+    
+    def __init__(self, clothes_type, user_id, name, created_at, stylered_at, need_styler, is_inside_styler, color, texture):
+        self.clothes_type = clothes_type
+        self.user_id = user_id
+        self.name = name
+        self.created_at = created_at
+        self.stylered_at = stylered_at
+        self.need_styler = need_styler
+        self.is_inside_styler = is_inside_styler
+        self.color = color
+        self.texture = texture
+        
+        
+class clotheSchema(Schema):
+    id = fields.Integer()
+    clothes_type = fields.String()
+    user_id = fields.Integer()
+    name = fields.String()
+    created_at = fields.DateTime()
+    stylered_at = fields.DateTime()
+    need_styler = fields.Integer()
+    is_inside_styler = fields.Integer()
+    color = fields.Integer()
+    texture = fields.String()       
+        
 
     def create(self):
         db.session.add(self)
