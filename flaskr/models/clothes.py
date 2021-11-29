@@ -36,6 +36,7 @@ class Clothes(db.Model):
         self.color = color
         self.texture = texture
         
+        
 class clotheSchema(Schema):
     id = fields.Integer()
     clothes_type = fields.String()

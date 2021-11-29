@@ -190,12 +190,20 @@ def control_styler(mode):
     result_con = schema_con.dump(new_control)
     result = schema_sty.dump(new_styler)
     c = Counter(result_con.values())
+    
+    ## 스타일러 연결 상태 체크
     if result['connection'] == 1:
+        
+        ##  counter로 1의 갯수를 세서, 기능이 모두 off 일때만 새로운 기능을 on 할 수 있도록
+        ## ex. id는 무조건 1이상이므로, 예약을 포함한 작동 중 기능 모두 꺼져 있어야 함
         if c[1] < 2:
+            ## 스타일러 모드를 받아와서 실행시킬 모드를 1로 turn on하고 db에 상태 저장
             new_control.data = {mode : 1}
             Control.query.filter_by(id=1).update(new_control.data)
             db.session.commit()
             update_schema = schema_con.dump(new_control)
+            
+            ## restful_api로 상태 반환
             return update_schema
         else :
             return '스타일러가 가동중입니다.'
