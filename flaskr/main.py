@@ -154,7 +154,7 @@ def need_styler(clothes):
     sch_date = [] # 일정에 대한 date 리스트
     ## 리스트에 요소 추가
     for i in range(0,len(cal_li)):
-        sch_li.append(cal_li[i]['summary'])
+        sch_li.append(cal_li[i]['summary']) 
         sch_date.append(cal_li[i]['start'])
         
     # 일정에 대한 dict 만들기    
@@ -162,9 +162,24 @@ def need_styler(clothes):
     
     new_clothes = Clothes.query.filter(Clothes.name ==clothes).first()
     schema = clotheSchema()
+    clo_json = schema.dump(new_clothes)
+    last_time = datetime.date.today() - datetime.date(int(clo_json['stylered_at'][0:4]),int(clo_json['stylered_at'][5:7]),int(clo_json['stylered_at'][8:10])) # 마지막 스타일러 가동으로부터 지난 시간
+    
+    
+    #### 추천 알고리즘(일정 & 마지막 스타일러 가동날짜를 고려한)
+    
+    
+    
+    
+    ### 0 = 매우필요 1 = 필요 2 = 괜찮음
+    need_styler_set = 1 ## 만약 스타일러가 필요하다고 나왔을 경우
+    
+    # need_styler update
+    new_clothes.need_styler = need_styler_set
+    db.session.commit()
     result = schema.dump(new_clothes)
-    last_time = datetime.date.today() - datetime.date(int(result['stylered_at'][0:4]),int(result['stylered_at'][5:7]),int(result['stylered_at'][8:10])) # 마지막 스타일러 가동으로부터 지난 시간
-    return sch_dict
+    return result
+
 
 @app.route('/')
 def root():
