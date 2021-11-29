@@ -3,6 +3,7 @@ from ssl import _create_default_https_context
 from typing import KeysView
 import urllib.request
 import urllib
+from numpy import tracemalloc_domain
 import requests
 import os.path
 import connexion
@@ -131,7 +132,8 @@ def calendar():
                                         singleEvents = is_single_events,
                                         orderBy = orderby
                                         ).execute()
-    return jsonify(events_result)
+    return json.dumps(events_result, ensure_ascii=False)
+    #return jsonify(events_result)
 
 
 @app.route('/connection/mirror',methods = ['GET'])
@@ -164,3 +166,59 @@ def error_handler(e):
     })
     response.content_type = 'application/json'
     return response
+
+
+### Word2Vec in Korea ###
+import datetime
+import urllib.request
+from gensim.models.word2vec import Word2Vec
+from gensim.models import Word2Vec
+import openpyxl
+import pandas as pd
+def Word2Vec_KOR():
+    ### Calendar에서 일정 받아오기 ###
+    schedule = calendar()
+    items = json.loads(schedule)
+
+    # now = datetime.datetime.now() # 오늘 날짜
+    # today = now.strftime('%Y-%m-%d')
+    # now_after_3 = now + datetime.timedelta(days=3) # 오늘로 부터 3일 뒤 날짜
+    # date = now_after_3.strftime('%Y-%m-%d')
+
+    # for i in range(100): # range 수정 필요
+    #     if items['items'][i]['start']['date'] == date:
+    #         todo = (items['items'][i]['summary'])
+
+    ### 테스트용 일정 ###
+    date = '2021-12-03'
+    if items['items'][1]['start']['date'] == date:
+       todo = (items['items'][1]['summary']) # todo = 'LG전자 면접'
+    
+    ### Word2Vec ###
+    #dataset = [['실외 액티비티'], ['실내 데이트'], ['피크닉'], ['저녁 모임'], ['비즈니스 미팅'], ['사무실'], ['가족 모임']]
+    dataset = [['실외 액티비티'], ['실내 데이트'], ['피크닉'], ['저녁 모임'], ['비즈니스 미팅'], ['사무실'], ['가족 모임'], ['LG전자 면접'], ['회의'], ['서울숲 피크닉'], ['롯데월드'], ['소프트웨어공학 회의']]
+    
+    check = [''''''+todo+'''''']
+    if check not in dataset:
+        dataset.append(check)
+    
+    model = Word2Vec(sentences = dataset, vector_size = 300, window = 10, min_count = 1, workers = 4, sg = 0)
+    
+    # print(model.wv.vectors.shape)   
+    # print(model.wv.similarity('사무실', '서울숲 피크닉'))
+    # print(model.wv.most_similar("회의")[0][0])
+
+    ### 유사도가 가장 높은 단어 반환 ###
+    data = ['실외 액티비티', '실내 데이트', '피크닉', '저녁 모임', '비즈니스 미팅', '사무실', '가족 모임']
+    if todo in data:
+        return todo
+    todoList = model.wv.most_similar(todo)
+    for i in range(len(todoList)):
+        for word in data:
+            if todoList[i][0]==word:
+                return todoList[i][0]
+        
+
+@app.route('/recommendScent',methods = ['GET'])
+def recommendScent():
+    return 
