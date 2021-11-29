@@ -12,7 +12,7 @@ from os import environ
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
 from flaskr.settings import CLEARDB_DATABASE_URL
@@ -21,6 +21,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from collections import Counter
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -52,12 +53,12 @@ from flaskr.models.user import User
 from flaskr.models.clothes import Clothes, clotheSchema
 from flaskr.models.scent import Scent
 from flaskr.models.clothes_combination import ClothesCombination
-from flaskr.models.control import Control
+from flaskr.models.control import Control, controlSchema
 from flaskr.models.recommendation import Recommendation
 from flaskr.models.schedule import Schedule
 from flaskr.models.styler_alert import StylerAlert
 from flaskr.models.user_preference import UserPreference
-from flaskr.models.styler import Styler
+from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
 db.create_all()
 
@@ -170,15 +171,36 @@ def need_styler(clothes):
     
     
     
-    
     ### 0 = 매우필요 1 = 필요 2 = 괜찮음
-    need_styler_set = 1 ## 만약 스타일러가 필요하다고 나왔을 경우
+    need_styler_set = 0 ## 만약 스타일러가 매우 필요하다고 나왔을 경우
     
     # need_styler update
     new_clothes.need_styler = need_styler_set
     db.session.commit()
     result = schema.dump(new_clothes)
     return result
+
+
+@app.route('/styler/control/<mode>',methods = ['GET'])
+def control_styler(mode):
+    new_styler = Styler.query.filter(Styler.id ==1).first()
+    new_control = Control.query.filter(Control.id==1).first()
+    schema_sty = stylerSchema()
+    schema_con = controlSchema()
+    result_con = schema_con.dump(new_control)
+    result = schema_sty.dump(new_styler)
+    c = Counter(result_con.values())
+    if result['connection'] == 1:
+        if c[1] < 2:
+            new_control.data = {mode : 1}
+            Control.query.filter_by(id=1).update(new_control.data)
+            db.session.commit()
+            update_schema = schema_con.dump(new_control)
+            return update_schema
+        else :
+            return '스타일러가 가동중입니다.'
+    else:
+        return 'disconnected'
 
 
 @app.route('/')

@@ -1,4 +1,5 @@
 from .. main import db
+from marshmallow import Schema, fields
 
 
 class Control(db.Model):
@@ -36,6 +37,23 @@ class Control(db.Model):
         db.session.add(self)
         db.session.commit()
         return self
+    
+class controlSchema(Schema):    
+    id = fields.Integer()
+    steril = fields.Integer()
+    store = fields.Integer()
+    styling = fields.Integer()
+    highend = fields.Integer()
+    steam = fields.Integer()
+    finedry = fields.Integer()
+    ready = fields.Integer()
+    refresh = fields.Integer()
+    dry = fields.Integer()
+    autodry = fields.Integer()
+    indoor_dehumification = fields.Integer()
+    reserv = fields.Integer()
+    
+    
 
 # CREATE TABLE control (
 #   id INTEGER PRIMARY KEY AUTOINCREMENT, 
