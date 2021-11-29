@@ -49,7 +49,7 @@ ma = Marshmallow(app)
 
 ########## DO NOT DELETE THESE IMPORT STATEMENTS ###########
 from flaskr.models.user import User
-from flaskr.models.clothes import Clothes
+from flaskr.models.clothes import Clothes, clotheSchema
 from flaskr.models.scent import Scent
 from flaskr.models.clothes_combination import ClothesCombination
 from flaskr.models.control import Control
@@ -96,7 +96,6 @@ def weather(city):
     return getWeather(city)
 
 ## google calendar API
-@app.route('/calendar',methods = ['GET'])
 def calendar():
     SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
     creds = None
@@ -131,7 +130,7 @@ def calendar():
                                         singleEvents = is_single_events,
                                         orderBy = orderby
                                         ).execute()
-    return jsonify(events_result)
+    return events_result
 
 
 @app.route('/connection/mirror',methods = ['GET'])
@@ -146,6 +145,26 @@ def connection():
     result = schema.dump(new_Mirror)
     return result
 
+
+@app.route('/recommand/styler/<clothes>',methods = ['GET'])
+def need_styler(clothes):
+    cal = calendar()
+    cal_li = cal['items'][0:]
+    sch_li = [] # 일정 리스트
+    sch_date = [] # 일정에 대한 date 리스트
+    ## 리스트에 요소 추가
+    for i in range(0,len(cal_li)):
+        sch_li.append(cal_li[i]['summary'])
+        sch_date.append(cal_li[i]['start'])
+        
+    # 일정에 대한 dict 만들기    
+    sch_dict = dict(zip(sch_li,sch_date))
+    
+    new_clothes = Clothes.query.filter(Clothes.name ==clothes).first()
+    schema = clotheSchema()
+    result = schema.dump(new_clothes)
+    last_time = datetime.date.today() - datetime.date(int(result['stylered_at'][0:4]),int(result['stylered_at'][5:7]),int(result['stylered_at'][8:10])) # 마지막 스타일러 가동으로부터 지난 시간
+    return sch_dict
 
 @app.route('/')
 def root():
