@@ -9,6 +9,8 @@ import os.path
 import connexion
 import json
 import datetime
+import openpyxl
+import pandas as pd
 from os import environ
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
@@ -23,6 +25,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from collections import Counter
+from gensim.models.word2vec import Word2Vec
+from gensim.models import Word2Vec
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -232,12 +236,6 @@ def error_handler(e):
 
 
 ### Word2Vec in Korea ###
-import datetime
-import urllib.request
-from gensim.models.word2vec import Word2Vec
-from gensim.models import Word2Vec
-import openpyxl
-import pandas as pd
 def Word2Vec_KOR():
     ### Calendar에서 일정 받아오기 ###
     schedule = calendar() 
@@ -255,7 +253,7 @@ def Word2Vec_KOR():
     ### 테스트용 일정 ###
     date = '2021-12-03'
     if items['items'][1]['start']['date'] == date:
-       todo = (items['items'][1]['summary']) # todo = 'LG전자 면접'
+        todo = (items['items'][1]['summary']) # todo = 'LG전자 면접'
     
     ### Word2Vec ###
     #dataset = [['실외 액티비티'], ['실내 데이트'], ['피크닉'], ['저녁 모임'], ['비즈니스 미팅'], ['사무실'], ['가족 모임']]
@@ -282,6 +280,6 @@ def Word2Vec_KOR():
                 return todoList[i][0]
         
 
-@app.route('/recommendScent',methods = ['GET'])
-def recommendScent():
-    return 
+# @app.route('/recommend/scent',methods = ['GET'])
+# def recommendScent():
+#     return 
