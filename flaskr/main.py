@@ -136,7 +136,8 @@ def calendar():
                                         singleEvents = is_single_events,
                                         orderBy = orderby
                                         ).execute()
-    return events_result
+    # return events_result
+    return json.dumps(events_result, ensure_ascii=False)
 
 
 @app.route('/connection/mirror',methods = ['GET'])
@@ -155,6 +156,7 @@ def connection():
 @app.route('/recommand/styler/<clothes>',methods = ['GET'])
 def need_styler(clothes):
     cal = calendar()
+    cal = json.loads(cal)
     cal_li = cal['items'][0:]
     sch_li = [] # 일정 리스트
     sch_date = [] # 일정에 대한 date 리스트
@@ -220,6 +222,12 @@ def control_styler(mode):
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
 
+@app.route('/test',methods = ['GET'])
+def test():
+    output = Word2Vec_KOR()
+    print(output)
+    return 'test'
+
 
 ### error handler ###
 @app.errorhandler(HTTPException)
@@ -238,7 +246,7 @@ def error_handler(e):
 ### Word2Vec in Korea ###
 def Word2Vec_KOR():
     ### Calendar에서 일정 받아오기 ###
-    schedule = calendar() 
+    schedule = calendar()
     items = json.loads(schedule) # Calendar 함수의 반환값을 return json.dumps(events_result, ensure_ascii=False)로 변환 필요
 
     # now = datetime.datetime.now() # 오늘 날짜
@@ -283,3 +291,4 @@ def Word2Vec_KOR():
 # @app.route('/recommend/scent',methods = ['GET'])
 # def recommendScent():
 #     return 
+
