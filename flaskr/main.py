@@ -1,9 +1,6 @@
 from __future__ import print_function
-from ssl import _create_default_https_context
-from typing import KeysView
 import urllib.request
 import urllib
-from numpy import tracemalloc_domain
 import requests
 import os.path
 import connexion
@@ -12,6 +9,8 @@ import datetime
 import openpyxl
 import pandas as pd
 from os import environ
+from ssl import _create_default_https_context
+from typing import KeysView
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -27,6 +26,7 @@ from google.oauth2.credentials import Credentials
 from collections import Counter
 from gensim.models.word2vec import Word2Vec
 from gensim.models import Word2Vec
+import numpy as np
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -53,7 +53,10 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
+
 ########## DO NOT DELETE THESE IMPORT STATEMENTS ###########
+
+
 from flaskr.models.user import User
 from flaskr.models.clothes import Clothes, clotheSchema
 from flaskr.models.scent import Scent
@@ -66,6 +69,10 @@ from flaskr.models.user_preference import UserPreference
 from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
 db.create_all()
+
+
+#############################################################
+
 
 
 # 날씨 api 가져오기
@@ -175,12 +182,48 @@ def need_styler(clothes):
     
     
     #### 추천 알고리즘(일정 & 마지막 스타일러 가동날짜를 고려한)
+    vl = sch_dict
+    timedel = np.timedelta64(last_time,'ns')
+    day = timedel.astype('timedelta64[D]')
+    day = day.astype(int)
     
-    
-    
-    ### 0 = 매우필요 1 = 필요 2 = 괜찮음
-    need_styler_set = 0 ## 만약 스타일러가 매우 필요하다고 나왔을 경우
-    
+    # sch = Word2Vec_KOR() # if '비즈니스 면접'
+    sch = '소풍'
+    dataset_dict = {'정장':['비즈니스 면접','면접'],'티셔츠':['소풍, 피크닉']}
+    print(vl)
+    if sch in dataset_dict[clothes] :
+        testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
+    else :
+        testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
+        
+    if testing == 1:
+        event_date = vl['서울숲 피크닉']['date'] ## 수정필요 -> 어떻게 서울숲 피크닉을 가져올 것인가?
+        new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
+        new_timedel = np.timedelta64(new_timedel,'ns')
+        new_day = new_timedel.astype('timedelta64[D]')
+        new_day = new_day.astype(int)
+        tm = new_day*new_day + 2.5 * (-1*day) # 기준 포인트
+        ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
+        if tm < 10:
+            need_styler_set = 0 # 매우 필요
+        
+        elif tm > 10 and tm < 20:
+            need_styler_set = 1 # 필요
+        
+        else :
+            need_styler_set = 2 # 괜찮음
+
+    elif testing == 0:
+        tm = 2.5 * (-1*day)
+        if tm < 10:
+            need_styler_set = 0 # 매우 필요
+        
+        elif tm > 10 and tm < 20:
+            need_styler_set = 1 # 필요
+        
+        else :
+            need_styler_set = 2 # 괜찮음
+
     # need_styler update
     new_clothes.need_styler = need_styler_set
     db.session.commit()
