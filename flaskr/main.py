@@ -149,18 +149,6 @@ class weatherSchema(Schema):
     low_temp = fields.Integer()
     daily = fields.Integer()
 
-# @app.route('/connection/mirror',methods = ['GET'])
-# def connection():
-#     # 값 넣어주기
-#     # new_Mirror = Mirror(connection=0).create()
-    
-#     # filtering : id가 100인 쿼리 찾기
-#     new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
-#     # schema
-#     schema = MirrorSchema()
-#     result = schema.dump(new_Mirror)
-#     return result
-
 
 @app.route('/status/<device>', methods=['GET'])
 def status(device):
