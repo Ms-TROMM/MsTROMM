@@ -27,6 +27,7 @@ from google.oauth2.credentials import Credentials
 from collections import Counter
 from gensim.models.word2vec import Word2Vec
 from gensim.models import Word2Vec
+from marshmallow import Schema, fields
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -188,7 +189,6 @@ def add_prefer(userid):
     result = schema.dump(new_prefer)
     return result
     
-    
 
 @app.route('/recommand/styler/<clothes>',methods = ['GET'])
 def need_styler(clothes):
@@ -290,6 +290,55 @@ def control_styler(mode):
         return 'disconnected'
 
     
+    
+@app.route('/recommand/today/<userid>', methods=['GET'])
+def recommand_today(userid):
+    name = User.query.filter_by(id=userid).first().username
+    info = weatherinfo('Seoul')
+    daily = info['daily'] # 일교차: 1 = 큼 / 0 = 크지 않음
+    high_temp = info['high_temp'] # 최고기온
+    low_temp = info['low_temp'] # 최저기온
+    cal = calendar()
+    cal = json.loads(cal)
+    cal_li = cal['items'][0:]
+    sch_li = [] # 일정 리스트
+    sch_date = [] # 일정에 대한 date 리스트
+    ## 리스트에 요소 추가
+    for i in range(0,len(cal_li)):
+        sch_li.append(cal_li[i]['summary']) # 스케쥴 리스트
+        sch_date.append(cal_li[i]['start']) # 스케쥴 날짜
+    
+    
+    # 이름, 최고온도, 최저온도, 일교차, 스케쥴 리스트
+    result = {
+        "name":name,
+        "max_temp":high_temp,
+        "min_temp":low_temp,
+        "daily":daily,
+        "schedule":sch_li
+    }
+
+    return jsonify(result)
+
+
+@app.route('/recommand/control/<userid>', methods=['GET'])
+def recommand_control(userid):
+    name = User.query.filter_by(id=userid).first().username
+    indoor_temp = Styler.query.filter_by(id=userid).first().temperature
+    indoor_humidity = Styler.query.filter_by(id=userid).first().humidity
+    inside = Clothes.query.filter(Clothes.is_inside_styler==1).all()
+    inside_li = []
+    for i in range(0,len(inside)):
+        inside_li.append(inside[i].name)
+    
+    # 이름, 집안 온도, 집안 습도, 스타일러 내 있는 옷
+    result = {
+        "name":name,
+        "indoor_temp":indoor_temp,
+        "indoor_humidity":indoor_humidity,
+        "inside_list":inside_li
+    }
+    return jsonify(result)
 
 
 @app.route('/weather/<city>', methods=['GET'])
@@ -298,7 +347,6 @@ def weatherinfo(city):
     weather = getWeather(city)
     high_temp = float(weather['main']['temp_max'])-273.15 # 절대온도 -> 섭씨 변환
     low_temp = float(weather['main']['temp_min'])-273.15 ## 온도 더블 체크하기
-    print(low_temp)
     if high_temp-low_temp > 10 : # 일교차가 클 경우(기준: 10도)
             daily = 1
             temp_data = {
