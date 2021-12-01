@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 #################### ONLY AN EXAMPLE FOR DISPLAYING SWAGGER UI ########################
 
 def get_timestamp():

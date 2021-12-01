@@ -8,6 +8,7 @@ import json
 import datetime
 import openpyxl
 import pandas as pd
+import numpy as np
 from os import environ
 from ssl import _create_default_https_context
 from typing import KeysView
@@ -26,7 +27,6 @@ from google.oauth2.credentials import Credentials
 from collections import Counter
 from gensim.models.word2vec import Word2Vec
 from gensim.models import Word2Vec
-import numpy as np
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -65,7 +65,7 @@ from flaskr.models.control import Control, controlSchema
 from flaskr.models.recommendation import Recommendation
 from flaskr.models.schedule import Schedule
 from flaskr.models.styler_alert import StylerAlert
-from flaskr.models.user_preference import UserPreference
+from flaskr.models.user_preference import UserPreference, preferSchema
 from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
 db.create_all()
@@ -103,10 +103,6 @@ def getWeather(city):
     # print("습도 : %r" % items['main']['humidity'])
     # print("============================")
     return items
-
-@app.route('/weather/<city>',methods = ['GET'])
-def weather(city):
-    return getWeather(city)
 
 ## google calendar API
 def calendar():
@@ -147,18 +143,35 @@ def calendar():
     return json.dumps(events_result, ensure_ascii=False)
 
 
-@app.route('/connection/mirror',methods = ['GET'])
-def connection():
-    # 값 넣어주기
-    # new_Mirror = Mirror(connection=0).create()
-    
-    # filtering : id가 100인 쿼리 찾기
-    new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
-    # schema
-    schema = MirrorSchema()
-    result = schema.dump(new_Mirror)
-    return result
+class weatherSchema(Schema):
+    high_temp = fields.Integer()
+    low_temp = fields.Integer()
+    daily = fields.Integer()
 
+# @app.route('/connection/mirror',methods = ['GET'])
+# def connection():
+#     # 값 넣어주기
+#     # new_Mirror = Mirror(connection=0).create()
+    
+#     # filtering : id가 100인 쿼리 찾기
+#     new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
+#     # schema
+#     schema = MirrorSchema()
+#     result = schema.dump(new_Mirror)
+#     return result
+
+
+## Add user Prefer
+@app.route('/user/<userid>/preference',methods = ['POST'])
+def add_prefer(userid):
+    json_data = request.get_json()
+    schema = preferSchema()
+    new_prefer = UserPreference(user_id=userid, scent_id = json_data['scentid'], fashion_style= json_data['fashion'], color=json_data['color']).create()
+    db.session.commit()
+    result = schema.dump(new_prefer)
+    return result
+    
+    
 
 @app.route('/recommand/styler/<clothes>',methods = ['GET'])
 def need_styler(clothes):
@@ -169,7 +182,7 @@ def need_styler(clothes):
     sch_date = [] # 일정에 대한 date 리스트
     ## 리스트에 요소 추가
     for i in range(0,len(cal_li)):
-        sch_li.append(cal_li[i]['summary']) 
+        sch_li.append(cal_li[i]['summary'])
         sch_date.append(cal_li[i]['start'])
         
     # 일정에 대한 dict 만들기    
@@ -188,7 +201,7 @@ def need_styler(clothes):
     
     # sch = Word2Vec_KOR() # if '비즈니스 면접'
     sch = ['피크닉','서울숲 피크닉'] # Word2Vec 결과
-    dataset_dict = {'정장':['비즈니스 면접','면접'],'티셔츠':['소풍, 피크닉']}
+    dataset_dict = {'정장':['비즈니스 면접','면접'],'티셔츠':['소풍, 피크닉']} # dataset 업데이트 해야할까?
     event_date = sch_dict[sch[1]]['date'] ## 수정필요 -> 어떻게 서울숲 피크닉을 가져올 것인가?
     new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
     new_timedel = np.timedelta64(new_timedel,'ns')
@@ -260,15 +273,54 @@ def control_styler(mode):
         return 'disconnected'
 
 
+@app.route('/status/<device>', methods=['GET'])
+def status(device):
+    new_styler = Styler.query.filter(Styler.id ==1).first()
+    new_mirror = Mirror.query.filter(Mirror.id ==1).first()
+    print(type(new_mirror))
+    schema_st = stylerSchema(only=("id","water_percentage","connection"))
+    schema_mi = stylerSchema(only=("id","connection"))
+    if device == 'styler':
+        result = schema_st.dump(new_styler)
+        return result
+    elif device == 'mirror':
+        result = schema_mi.dump(new_mirror)
+        return result
+    else:
+        return 'device not found'
+    
+
+
+@app.route('/weather/<city>', methods=['GET'])
+def weatherinfo(city):
+    schema = weatherSchema()
+    weather = getWeather(city)
+    high_temp = float(weather['main']['temp_max'])-273.15 # 절대온도 -> 섭씨 변환
+    low_temp = float(weather['main']['temp_min'])-273.15 ## 온도 더블 체크하기
+    print(low_temp)
+    if high_temp-low_temp > 10 : # 일교차가 클 경우(기준: 10도)
+            daily = 1
+            temp_data = {
+                "high_temp":high_temp,
+                "low_temp":low_temp,
+                "daily":daily
+            }
+            result = schema.dump(temp_data)
+    else : # 일교차가 크지 않을 경우
+            daily = 0   
+            temp_data = {
+                "high_temp":high_temp,
+                "low_temp":low_temp,
+                "daily":daily
+            }
+            result = schema.dump(temp_data)
+    return result
+        
+
+
 @app.route('/')
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
-
-@app.route('/test',methods = ['GET'])
-def test():
-    output = Word2Vec_KOR()
-    print(output)
-    return 'test'
 
 
 ### error handler ###
