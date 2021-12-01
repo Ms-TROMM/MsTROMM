@@ -182,47 +182,46 @@ def need_styler(clothes):
     
     
     #### 추천 알고리즘(일정 & 마지막 스타일러 가동날짜를 고려한)
-    vl = sch_dict
     timedel = np.timedelta64(last_time,'ns')
     day = timedel.astype('timedelta64[D]')
     day = day.astype(int)
     
     # sch = Word2Vec_KOR() # if '비즈니스 면접'
-    sch = '소풍'
+    sch = ['피크닉','서울숲 피크닉'] # Word2Vec 결과
     dataset_dict = {'정장':['비즈니스 면접','면접'],'티셔츠':['소풍, 피크닉']}
-    print(vl)
-    if sch in dataset_dict[clothes] :
+    event_date = sch_dict[sch[1]]['date'] ## 수정필요 -> 어떻게 서울숲 피크닉을 가져올 것인가?
+    new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
+    new_timedel = np.timedelta64(new_timedel,'ns')
+    new_day = new_timedel.astype('timedelta64[D]')
+    new_day = new_day.astype(int)
+    if sch[0] in dataset_dict[clothes] :
         testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
     else :
         testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
         
     if testing == 1:
-        event_date = vl['서울숲 피크닉']['date'] ## 수정필요 -> 어떻게 서울숲 피크닉을 가져올 것인가?
-        new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
-        new_timedel = np.timedelta64(new_timedel,'ns')
-        new_day = new_timedel.astype('timedelta64[D]')
-        new_day = new_day.astype(int)
-        tm = new_day*new_day + 2.5 * (-1*day) # 기준 포인트
+        tm = 2*day + np.exp2(6-new_day) # 기준 포인트
         ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
-        if tm < 10:
+        if tm >= 8:
             need_styler_set = 0 # 매우 필요
         
-        elif tm > 10 and tm < 20:
+        elif tm >= 6 and tm < 8:
             need_styler_set = 1 # 필요
         
         else :
             need_styler_set = 2 # 괜찮음
 
     elif testing == 0:
-        tm = 2.5 * (-1*day)
-        if tm < 10:
+        tm = 2*day + np.exp2(6-new_day) # 기준 포인트
+        if tm >= 8:
             need_styler_set = 0 # 매우 필요
         
-        elif tm > 10 and tm < 20:
+        elif tm >= 6 and tm < 8:
             need_styler_set = 1 # 필요
         
         else :
             need_styler_set = 2 # 괜찮음
+
 
     # need_styler update
     new_clothes.need_styler = need_styler_set
