@@ -12,14 +12,16 @@ class Styler(db.Model):
     dry_connect = db.Column(db.Integer, default=0)
     humidity = db.Column(db.Integer, default=0)
     temperature = db.Column(db.Integer)
+    now_mode = db.Column(db.String(30))
     
-    def __init__(self,water_percentage, connection, dehumification_connect, dry_connect, humidity, temperature) :
+    def __init__(self,water_percentage, connection, dehumification_connect, dry_connect, humidity, temperature, now_mode) :
         self.water_percentage = water_percentage
         self.connection = connection
         self.dehumification_connect = dehumification_connect
         self.dry_connect = dry_connect
         self.humidity = humidity
         self.temperature = temperature
+        self.now_mode = now_mode
         
 
     def create(self):
@@ -35,6 +37,7 @@ class stylerSchema(Schema):
     dry_connect = fields.Integer()
     humidity = fields.Integer()
     temperature = fields.Integer()
+    now_mode = fields.String()
     
 # Table styler{
 #   id int [pk, increment]

@@ -161,6 +161,23 @@ class weatherSchema(Schema):
 #     return result
 
 
+@app.route('/status/<device>', methods=['GET'])
+def status(device):
+    new_styler = Styler.query.filter(Styler.id ==1).first()
+    new_mirror = Mirror.query.filter(Mirror.id ==1).first()
+    print(type(new_mirror))
+    schema_st = stylerSchema()
+    schema_mi = stylerSchema(only=("id","connection"))
+    if device == 'styler':
+        result = schema_st.dump(new_styler)
+        return result
+    elif device == 'mirror':
+        result = schema_mi.dump(new_mirror)
+        return result
+    else:
+        return 'device not found'
+    
+
 ## Add user Prefer
 @app.route('/user/<userid>/preference',methods = ['POST'])
 def add_prefer(userid):
@@ -272,22 +289,6 @@ def control_styler(mode):
     else:
         return 'disconnected'
 
-
-@app.route('/status/<device>', methods=['GET'])
-def status(device):
-    new_styler = Styler.query.filter(Styler.id ==1).first()
-    new_mirror = Mirror.query.filter(Mirror.id ==1).first()
-    print(type(new_mirror))
-    schema_st = stylerSchema(only=("id","water_percentage","connection"))
-    schema_mi = stylerSchema(only=("id","connection"))
-    if device == 'styler':
-        result = schema_st.dump(new_styler)
-        return result
-    elif device == 'mirror':
-        result = schema_mi.dump(new_mirror)
-        return result
-    else:
-        return 'device not found'
     
 
 
