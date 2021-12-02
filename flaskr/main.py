@@ -164,7 +164,7 @@ def status(device):
     
 
 ## Add user Prefer
-@app.route('/user/<userid>/preference',methods = ['POST'])
+@app.route('/<userid>/preference',methods = ['POST'])
 def add_prefer(userid):
     json_data = request.get_json()
     schema = preferSchema()
@@ -172,7 +172,25 @@ def add_prefer(userid):
     db.session.commit()
     result = schema.dump(new_prefer)
     return result
-    
+
+# Add clothes
+@app.route('/<userid>/clothes',methods = ['POST'])
+def add_clothes(userid):
+    json_data = request.get_json()
+    schema = clotheSchema(only=("name","user_id","clothes_type","sub_type","color","texture"))
+    new_clothe_data = Clothes(name= json_data['name'],user_id=userid, clothes_type= json_data['category'], sub_type= json_data['sub_type'], color= json_data['color'], texture= json_data['texture'] ).create()
+    result = schema.dump(new_clothe_data)
+    return result
+
+    """
+    {
+    "name":"정장1",
+    "category":"onepiece",
+    "sub_type": 3,
+    "color": 292929,
+    "texture":"울"
+}
+    """
 
 @app.route('/recommand/styler/<clothes>',methods = ['GET'])
 def need_styler(clothes):
@@ -242,6 +260,7 @@ def need_styler(clothes):
     db.session.commit()
     result = schema.dump(new_clothes)
     return result
+
 
 
 @app.route('/styler/control/<mode>',methods = ['GET'])

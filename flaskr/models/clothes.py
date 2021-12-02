@@ -10,10 +10,13 @@ class ClothesType(enum.Enum):
     onepiece = 3
 
 
+### sub_type = enum으로 해야할까??
+
+
 class Clothes(db.Model):
     __tablename__ = 'clothes'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, default=1)
     clothes_type = db.Column(db.Enum(ClothesType))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(30))
@@ -24,17 +27,20 @@ class Clothes(db.Model):
     is_inside_styler = db.Column(db.Integer, default=0)
     color = db.Column(db.Integer) # Must convert hexadecimal color value to integer before inserting into database
     texture = db.Column(db.String(50))
+    sub_type = db.Column(db.Integer)
     
-    def __init__(self, clothes_type, user_id, name, created_at, stylered_at, need_styler, is_inside_styler, color, texture):
+    def __init__(self, clothes_type, user_id, name, color, texture,sub_type):
         self.clothes_type = clothes_type
         self.user_id = user_id
         self.name = name
-        self.created_at = created_at
-        self.stylered_at = stylered_at
-        self.need_styler = need_styler
-        self.is_inside_styler = is_inside_styler
         self.color = color
         self.texture = texture
+        self.sub_type = sub_type
+        
+    def create(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
         
         
 class clotheSchema(Schema):
@@ -47,7 +53,8 @@ class clotheSchema(Schema):
     need_styler = fields.Integer()
     is_inside_styler = fields.Integer()
     color = fields.Integer()
-    texture = fields.String()       
+    texture = fields.String()  
+    sub_type = fields.Integer()     
         
 
     def create(self):
