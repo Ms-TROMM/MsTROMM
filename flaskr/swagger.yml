@@ -1,38 +1,59 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
   description: This is the swagger file that goes with our server code
-  version: "1.0.0"
+  version: '1.0.0'
   title: Ms.TROMM REST API DOCUMENT
 consumes:
-  - "application/json"
+  - 'application/json'
 produces:
-  - "application/json"
+  - 'application/json'
 
-basePath: "/api"
+basePath: '/api'
 # basePath: "/api" defines the root of the API, kind of like a namespace the REST API will come from.
 
 # Paths supported by the server application
 paths:
   /people:
     get:
-      operationId: "flaskr.people.read"
+      operationId: 'flaskr.people.read'
       tags:
-        - "People"
-      summary: "The people data structure supported by the server application"
-      description: "Read the list of people"
+        - 'People'
+      summary: 'The people data structure supported by the server application'
+      description: 'Read the list of people'
       responses:
         200:
-          description: "Successful read people list operation"
+          description: 'Successful read people list operation'
           schema:
-            type: "array"
+            type: 'array'
             items:
               properties:
                 fname:
-                  type: "string"
+                  type: 'string'
                 lname:
-                  type: "string"
+                  type: 'string'
                 timestamp:
-                  type: "string"
+                  type: 'string'
 
+  ###### 수정 중  #####
 
+  # /status/{device}:
+  #   get:
+  #   operationId: 'flaskr.main.status'
+  #   tags:
+  #     - 'test1'
+  #   summary: 'test2'
+  #   description: 'test3'
+  #   responses:
+  #     200:
+  #       description: 'Successful read test list operation'
+  #       schema:
+  #         type: 'object'
+  #         items:
+  #           properties:
+  #             id:
+  #               type: 'integer'
+  #             water_percentage:
+  #               type: 'integer'
+  #             connection:
+  #               type: 'integer'
 # reference : https://realpython.com/flask-connexion-rest-api/#adding-connexion-to-the-server

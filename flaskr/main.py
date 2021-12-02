@@ -1,9 +1,6 @@
 from __future__ import print_function
-from ssl import _create_default_https_context
-from typing import KeysView
 import urllib.request
 import urllib
-from numpy import tracemalloc_domain
 import requests
 import os.path
 import connexion
@@ -11,7 +8,10 @@ import json
 import datetime
 import openpyxl
 import pandas as pd
+import numpy as np
 from os import environ
+from ssl import _create_default_https_context
+from typing import KeysView
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -27,6 +27,7 @@ from google.oauth2.credentials import Credentials
 from collections import Counter
 from gensim.models.word2vec import Word2Vec
 from gensim.models import Word2Vec
+from marshmallow import Schema, fields
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')
@@ -53,7 +54,10 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
+
 ########## DO NOT DELETE THESE IMPORT STATEMENTS ###########
+
+
 from flaskr.models.user import User
 from flaskr.models.clothes import Clothes, clotheSchema
 from flaskr.models.scent import Scent
@@ -62,10 +66,14 @@ from flaskr.models.control import Control, controlSchema
 from flaskr.models.recommendation import Recommendation
 from flaskr.models.schedule import Schedule
 from flaskr.models.styler_alert import StylerAlert
-from flaskr.models.user_preference import UserPreference
+from flaskr.models.user_preference import UserPreference, preferSchema
 from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
 db.create_all()
+
+
+#############################################################
+
 
 
 # 날씨 api 가져오기
@@ -96,10 +104,6 @@ def getWeather(city):
     # print("습도 : %r" % items['main']['humidity'])
     # print("============================")
     return items
-
-@app.route('/weather/<city>',methods = ['GET'])
-def weather(city):
-    return getWeather(city)
 
 ## google calendar API
 def calendar():
@@ -140,18 +144,39 @@ def calendar():
     return json.dumps(events_result, ensure_ascii=False)
 
 
-@app.route('/connection/mirror',methods = ['GET'])
-def connection():
-    # 값 넣어주기
-    # new_Mirror = Mirror(connection=0).create()
-    
-    # filtering : id가 100인 쿼리 찾기
-    new_Mirror = Mirror.query.filter(Mirror.id == 100).first()
-    # schema
-    schema = MirrorSchema()
-    result = schema.dump(new_Mirror)
-    return result
+class weatherSchema(Schema):
+    high_temp = fields.Integer()
+    low_temp = fields.Integer()
+    daily = fields.Integer()
 
+
+@app.route('/status/<device>', methods=['GET'])
+def status(device):
+    new_styler = Styler.query.filter(Styler.id ==1).first()
+    new_mirror = Mirror.query.filter(Mirror.id ==1).first()
+    print(type(new_mirror))
+    schema_st = stylerSchema()
+    schema_mi = stylerSchema(only=("id","connection"))
+    if device == 'styler':
+        result = schema_st.dump(new_styler)
+        return result
+    elif device == 'mirror':
+        result = schema_mi.dump(new_mirror)
+        return result
+    else:
+        return 'device not found'
+    
+
+## Add user Prefer
+@app.route('/user/<userid>/preference',methods = ['POST'])
+def add_prefer(userid):
+    json_data = request.get_json()
+    schema = preferSchema()
+    new_prefer = UserPreference(user_id=userid, scent_id = json_data['scentid'], fashion_style= json_data['fashion'], color=json_data['color']).create()
+    db.session.commit()
+    result = schema.dump(new_prefer)
+    return result
+    
 
 @app.route('/recommand/styler/<clothes>',methods = ['GET'])
 def need_styler(clothes):
@@ -162,7 +187,7 @@ def need_styler(clothes):
     sch_date = [] # 일정에 대한 date 리스트
     ## 리스트에 요소 추가
     for i in range(0,len(cal_li)):
-        sch_li.append(cal_li[i]['summary']) 
+        sch_li.append(cal_li[i]['summary'])
         sch_date.append(cal_li[i]['start'])
         
     # 일정에 대한 dict 만들기    
@@ -175,12 +200,47 @@ def need_styler(clothes):
     
     
     #### 추천 알고리즘(일정 & 마지막 스타일러 가동날짜를 고려한)
+    timedel = np.timedelta64(last_time,'ns')
+    day = timedel.astype('timedelta64[D]')
+    day = day.astype(int)
     
-    
-    
-    ### 0 = 매우필요 1 = 필요 2 = 괜찮음
-    need_styler_set = 0 ## 만약 스타일러가 매우 필요하다고 나왔을 경우
-    
+    # sch = Word2Vec_KOR() # if '비즈니스 면접'
+    sch = ['피크닉','서울숲 피크닉'] # Word2Vec 결과
+    dataset_dict = {'정장':['비즈니스 면접','면접'],'티셔츠':['소풍, 피크닉']} # dataset 업데이트 해야할까?
+    event_date = sch_dict[sch[1]]['date'] ## 수정필요 -> 어떻게 서울숲 피크닉을 가져올 것인가?
+    new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
+    new_timedel = np.timedelta64(new_timedel,'ns')
+    new_day = new_timedel.astype('timedelta64[D]')
+    new_day = new_day.astype(int)
+    if sch[0] in dataset_dict[clothes] :
+        testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
+    else :
+        testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
+        
+    if testing == 1:
+        tm = 2*day + np.exp2(6-new_day) # 기준 포인트
+        ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
+        if tm >= 8:
+            need_styler_set = 0 # 매우 필요
+        
+        elif tm >= 6 and tm < 8:
+            need_styler_set = 1 # 필요
+        
+        else :
+            need_styler_set = 2 # 괜찮음
+
+    elif testing == 0:
+        tm = 2*day + np.exp2(6-new_day) # 기준 포인트
+        if tm >= 8:
+            need_styler_set = 0 # 매우 필요
+        
+        elif tm >= 6 and tm < 8:
+            need_styler_set = 1 # 필요
+        
+        else :
+            need_styler_set = 2 # 괜찮음
+
+
     # need_styler update
     new_clothes.need_styler = need_styler_set
     db.session.commit()
@@ -217,16 +277,87 @@ def control_styler(mode):
     else:
         return 'disconnected'
 
+    
+    
+@app.route('/recommand/today/<userid>', methods=['GET'])
+def recommand_today(userid):
+    name = User.query.filter_by(id=userid).first().username
+    info = weatherinfo('Seoul')
+    daily = info['daily'] # 일교차: 1 = 큼 / 0 = 크지 않음
+    high_temp = info['high_temp'] # 최고기온
+    low_temp = info['low_temp'] # 최저기온
+    cal = calendar()
+    cal = json.loads(cal)
+    cal_li = cal['items'][0:]
+    sch_li = [] # 일정 리스트
+    sch_date = [] # 일정에 대한 date 리스트
+    ## 리스트에 요소 추가
+    for i in range(0,len(cal_li)):
+        sch_li.append(cal_li[i]['summary']) # 스케쥴 리스트
+        sch_date.append(cal_li[i]['start']) # 스케쥴 날짜
+    
+    
+    # 이름, 최고온도, 최저온도, 일교차, 스케쥴 리스트
+    result = {
+        "name":name,
+        "max_temp":high_temp,
+        "min_temp":low_temp,
+        "daily":daily,
+        "schedule":sch_li
+    }
+
+    return jsonify(result)
+
+
+@app.route('/recommand/control/<userid>', methods=['GET'])
+def recommand_control(userid):
+    name = User.query.filter_by(id=userid).first().username
+    indoor_temp = Styler.query.filter_by(id=userid).first().temperature
+    indoor_humidity = Styler.query.filter_by(id=userid).first().humidity
+    inside = Clothes.query.filter(Clothes.is_inside_styler==1).all()
+    inside_li = []
+    for i in range(0,len(inside)):
+        inside_li.append(inside[i].name)
+    
+    # 이름, 집안 온도, 집안 습도, 스타일러 내 있는 옷
+    result = {
+        "name":name,
+        "indoor_temp":indoor_temp,
+        "indoor_humidity":indoor_humidity,
+        "inside_list":inside_li
+    }
+    return jsonify(result)
+
+
+@app.route('/weather/<city>', methods=['GET'])
+def weatherinfo(city):
+    schema = weatherSchema()
+    weather = getWeather(city)
+    high_temp = float(weather['main']['temp_max'])-273.15 # 절대온도 -> 섭씨 변환
+    low_temp = float(weather['main']['temp_min'])-273.15 ## 온도 더블 체크하기
+    if high_temp-low_temp > 10 : # 일교차가 클 경우(기준: 10도)
+            daily = 1
+            temp_data = {
+                "high_temp":high_temp,
+                "low_temp":low_temp,
+                "daily":daily
+            }
+            result = schema.dump(temp_data)
+    else : # 일교차가 크지 않을 경우
+            daily = 0   
+            temp_data = {
+                "high_temp":high_temp,
+                "low_temp":low_temp,
+                "daily":daily
+            }
+            result = schema.dump(temp_data)
+    return result
+        
+
 
 @app.route('/')
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
-
-@app.route('/test',methods = ['GET'])
-def test():
-    output = Word2Vec_KOR()
-    print(output)
-    return 'test'
 
 
 ### error handler ###
