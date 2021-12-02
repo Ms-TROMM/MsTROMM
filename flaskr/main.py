@@ -91,18 +91,14 @@ def getWeather(city):
     res = req.readline()
     # 받은 값 JSON 형태로 정제하여 반환
     items = json.loads(res)
-    # print("============================")
     # print("도시명 : %r" % items['name'])
-    # print("============================")
     # print("날씨 : %r" % items['weather'][0]['main'])
     # print("날씨상세 : %r" % items['weather'][0]['description'])
-    # print("============================")
     # print("현재온도 : %r" % str(int(items['main']['temp'])-273.15))
     # print("체감온도 : %r" % str(int(items['main']['feels_like'])-273.15))
     # print("최저온도 : %r" % str(int(items['main']['temp_min'])-273.15))
     # print("최고온도 : %r" % str(int(items['main']['temp_max'])-273.15))
     # print("습도 : %r" % items['main']['humidity'])
-    # print("============================")
     return items
 
 ## google calendar API
@@ -277,7 +273,6 @@ def control_styler(mode):
     else:
         return 'disconnected'
 
-    
     
 @app.route('/recommand/today/<userid>', methods=['GET'])
 def recommand_today(userid):
