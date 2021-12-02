@@ -244,31 +244,14 @@ def error_handler(e):
 
 
 ### Word2Vec in Korea ###
-def Word2Vec_KOR():
-    ### Calendar에서 일정 받아오기 ###
-    schedule = calendar()
-    items = json.loads(schedule) # Calendar 함수의 반환값을 return json.dumps(events_result, ensure_ascii=False)로 변환 필요
+def Word2Vec_KOR(schedule):
 
-    now = datetime.datetime.now() # 오늘 날짜
-    today = now.strftime('%Y-%m-%d')
-    now_after_3 = now + datetime.timedelta(days=3) # 오늘로 부터 3일 뒤 날짜
-    date = now_after_3.strftime('%Y-%m-%d')
-
-    try:
-        for i in range(10): # range 수정 필요
-            if items['items'][i]['start']['date'] == date:
-                todo = (items['items'][i]['summary'])
-                break
-    except:
-        return "일정이 없습니다."
-
-    print(todo)
-
+    todo = schedule
+    
     ### 테스트용 일정 ###
-    # todo = '회의'
+    todo = '회의'
     
     ### Word2Vec ###
-    #dataset = [['실외 액티비티'], ['실내 데이트'], ['피크닉'], ['저녁 모임'], ['비즈니스 미팅'], ['사무실'], ['가족 모임']]
     dataset = [['실외 액티비티'], ['실내 데이트'], ['피크닉'], ['저녁 모임'], ['비즈니스 미팅'], ['사무실'], ['가족 모임'], ['LG전자 면접'], ['회의'], ['서울숲 피크닉'], ['롯데월드'], ['소프트웨어공학 회의']]
     
     check = [''''''+todo+'''''']
@@ -289,6 +272,11 @@ def Word2Vec_KOR():
     # print(model.wv.vectors.shape)
     # print(model.wv.similarity('사무실', '서울숲 피크닉'))
     # print(model.wv.most_similar(todo))
+        
+
+@app.route('/recommend/scent',methods = ['GET'])
+def recommendScent():
+    schedule = Word2Vec_KOR()
 
     ### 유사도가 가장 높은 단어 반환 ###
     # data = ['실외 액티비티', '실내 데이트', '피크닉', '저녁 모임', '비즈니스 미팅', '사무실', '가족 모임']
@@ -299,11 +287,6 @@ def Word2Vec_KOR():
     #     for word in data:
     #         if todoList[i][0]==word:
     #             return todoList[i][0]
-        
 
-@app.route('/recommend/scent',methods = ['GET'])
-def recommendScent():
-    schedule = Word2Vec_KOR()
-    #scent = Scent.query.filter(Scent.description == schedule).first()
-    #return scent
-    return jsonify(schedule)
+    scent = Scent.query.filter(Scent.description == schedule).first()
+    return jsonify(scent)
