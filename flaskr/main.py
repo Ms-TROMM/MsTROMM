@@ -168,7 +168,7 @@ def status(device):
 def add_prefer(userid):
     json_data = request.get_json()
     schema = preferSchema()
-    new_prefer = UserPreference(user_id=userid, scent_id = json_data['scentid'], fashion_style= json_data['fashion'], color=json_data['color']).create()
+    new_prefer = UserPreference(user_id=userid, scent_id_one = json_data['scentid_one'],scent_id_two = json_data['scentid_two'], scent_id_three = json_data['scentid_three'],fashion_style_one= json_data['fashion_one'], fashion_style_two= json_data['fashion_two'],fashion_style_three= json_data['fashion_three'], color_one=json_data['color_one'], color_two=json_data['color_two'], color_three=json_data['color_three']).create()
     db.session.commit()
     result = schema.dump(new_prefer)
     return result
