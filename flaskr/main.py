@@ -369,35 +369,50 @@ def error_handler(e):
     return response
 
 
+from konlpy.tag import Okt
+#import jpype
 ### Word2Vec in Korea ###
-def Word2Vec_KOR(schedule):
+def Word2Vec_KOR():
+    #jpype.attachThreadToJVM()
+    okt = Okt()
+    df = pd.read_csv('blog_crawling.csv',names=['title', 'url', 'date', 'description'])
+    lines = df['description']
+    print(lines)
 
-    todo = schedule
-    
-    ### 테스트용 일정 ###
-    todo = '회의'
-    
+    dataset = []
+    #for i in range(len(lines)):
+    #    dataset.append(okt.nouns(lines[i]))
+    #dataset = [[y for y in x if not len(y)==1] for x in dataset]
+    #dataset = [[y for y in x if not y.isdigit()] for x in dataset]
+
+    #model = Word2Vec(dataset, sg=1, window=5, min_count=1)
+    #model.init_sims(replace = True)    
+
+    #print(model.wv.similarity('서울랜드','롯데월드'))
+    #print(model.wv.most_similar("롯데월드"))
+
     ### Word2Vec ###
-    dataset = [['실외 액티비티'], ['실내 데이트'], ['피크닉'], ['저녁 모임'], ['비즈니스 미팅'], ['사무실'], ['가족 모임'], ['LG전자 면접'], ['회의'], ['서울숲 피크닉'], ['롯데월드'], ['소프트웨어공학 회의']]
-    
-    check = [''''''+todo+'''''']
-    if check not in dataset:
-        dataset.append(check)      
-    
-    model = Word2Vec(sentences = dataset, vector_size = 400, window = 10, min_count = 1, workers = 4, sg = 0)
-    
+    # dataset = [['롯데월드'],[]]
+
+    # check = [''''''+schedule+'''''']
+    # if check not in dataset:
+    #     dataset.append(check)      
+
+    # model = Word2Vec(sentences = dataset, vector_size = 400, window = 10, min_count = 1, workers = 4, sg = 0)
+
     ### pre-trained language model ###
-    # model = Word2Vec.load("wiki.ko.vec")
-    # model = gensim.models.KeyedVectors.load_word2vec_format("wiki.ko.vec")
-
-    try:
-	    return model.wv.most_similar(todo)
-    except:
-	    return "없음"
-
+    # model = Word2Vec.load("cc.ko.300.bin.gz")
+    # model = gensim.models.KeyedVectors.load_word2vec_format("cc.ko.300.bin.gz")
+    
     # print(model.wv.vectors.shape)
     # print(model.wv.similarity('사무실', '서울숲 피크닉'))
     # print(model.wv.most_similar(todo))
+
+    try:
+        return "실패"
+	    #return model.wv.most_similar("롯데월드")
+    except:
+	    return "없음"
         
 
 @app.route('/recommend/scent',methods = ['GET'])
@@ -414,5 +429,6 @@ def recommendScent():
     #         if todoList[i][0]==word:
     #             return todoList[i][0]
 
+
     scent = Scent.query.filter(Scent.description == schedule).first()
-    return jsonify(scent)
+    return jsonify(schedule)
