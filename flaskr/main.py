@@ -9,6 +9,7 @@ import datetime
 import openpyxl
 import pandas as pd
 import numpy as np
+from konlpy.tag import Okt
 from os import environ
 from ssl import _create_default_https_context
 from typing import KeysView
@@ -222,8 +223,8 @@ def alert(userid):
      return '수정중'
 
 
-@app.route('/recommand/styler/<clothes>',methods = ['GET'])
-def need_styler(clothes):
+@app.route('/recommand/styler/<clothes>/<userid>',methods = ['GET'])
+def need_styler(clothes,userid):
     cal = calendar()
     cal = json.loads(cal)
     cal_li = cal['items'][0:]
@@ -248,18 +249,20 @@ def need_styler(clothes):
     day = timedel.astype('timedelta64[D]')
     day = day.astype(int)
     
-    # sch = Word2Vec_KOR() # if '비즈니스 면접'
-    sch = ['피크닉','서울숲 피크닉'] # Word2Vec 결과
-    dataset_dict = {'정장':['비즈니스 면접','면접'],'티셔츠':['소풍, 피크닉']} # dataset 업데이트 해야할까?
-    event_date = sch_dict[sch[1]]['date'] ## 수정필요 -> 어떻게 서울숲 피크닉을 가져올 것인가?
+    standard = control_csv(clothes,userid) # 결과 : 티셔츠와 서울숲 피크닉 ['서울숲 피크닉'] 
+    event_date = sch_dict[standard[0]]['date']
     new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
     new_timedel = np.timedelta64(new_timedel,'ns')
     new_day = new_timedel.astype('timedelta64[D]')
     new_day = new_day.astype(int)
-    if sch[0] in dataset_dict[clothes] :
-        testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
-    else :
-        testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
+    df = pd.read_csv('flaskr/dataset.csv')
+    df = pd.DataFrame(df) 
+    for i in range(0,min(len(df[clothes].tolist()),len(sch_li))):
+        if (sch_li[i] in df[clothes].tolist()) == True :
+            testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
+            break
+        else :
+            testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
         
     if testing == 1:
         tm = 2*day + np.exp2(6-new_day) # 기준 포인트
@@ -430,66 +433,172 @@ def error_handler(e):
     return response
 
 
-from konlpy.tag import Okt
-#import jpype
-### Word2Vec in Korea ###
-def Word2Vec_KOR():
-    #jpype.attachThreadToJVM()
-    okt = Okt()
-    df = pd.read_csv('blog_crawling.csv',names=['title', 'url', 'date', 'description'])
-    lines = df['description']
-    print(lines)
+# # from konlpy.tag import Okt
+# from konlpy.tag import Okt
 
-    dataset = []
-    #for i in range(len(lines)):
-    #    dataset.append(okt.nouns(lines[i]))
-    #dataset = [[y for y in x if not len(y)==1] for x in dataset]
-    #dataset = [[y for y in x if not y.isdigit()] for x in dataset]
+# #import jpype
+# ### Word2Vec in Korea ###
+# def Word2Vec_KOR():
+#     #jpype.attachThreadToJVM()
+#     okt = Okt()
+#     df = pd.read_csv('blog_crawling.csv',names=['title', 'url', 'date', 'description'])
+#     lines = df['description']
+#     # print(lines)
 
-    #model = Word2Vec(dataset, sg=1, window=5, min_count=1)
-    #model.init_sims(replace = True)    
+#     dataset = []
+#     for i in range(len(lines)):
+#        dataset.append(okt.nouns(lines[i]))
+#     dataset = [[y for y in x if not len(y)==1] for x in dataset]
+#     dataset = [[y for y in x if not y.isdigit()] for x in dataset]
 
-    #print(model.wv.similarity('서울랜드','롯데월드'))
-    #print(model.wv.most_similar("롯데월드"))
+#     model = Word2Vec(dataset, sg=1, window=5, min_count=1)
+#     model.init_sims(replace = True)    
 
-    ### Word2Vec ###
-    # dataset = [['롯데월드'],[]]
+#     print(model.wv.similarity('애버랜드','롯데월드'))
+#     print(model.wv.most_similar("롯데월드"))
 
-    # check = [''''''+schedule+'''''']
-    # if check not in dataset:
-    #     dataset.append(check)      
+#     ### Word2Vec ###
+#     # dataset = [['롯데월드'],[]]
 
-    # model = Word2Vec(sentences = dataset, vector_size = 400, window = 10, min_count = 1, workers = 4, sg = 0)
+#     # check = [''''''+schedule+'''''']
+#     # if check not in dataset:
+#     #     dataset.append(check)      
 
-    ### pre-trained language model ###
-    # model = Word2Vec.load("cc.ko.300.bin.gz")
-    # model = gensim.models.KeyedVectors.load_word2vec_format("cc.ko.300.bin.gz")
+#     # model = Word2Vec(sentences = dataset, vector_size = 400, window = 10, min_count = 1, workers = 4, sg = 0)
+
+#     ### pre-trained language model ###
+#     # model = Word2Vec.load("cc.ko.300.bin.gz")
+#     # model = gensim.models.KeyedVectors.load_word2vec_format("cc.ko.300.bin.gz")
     
-    # print(model.wv.vectors.shape)
-    # print(model.wv.similarity('사무실', '서울숲 피크닉'))
-    # print(model.wv.most_similar(todo))
-
-    try:
-        return "실패"
-	    #return model.wv.most_similar("롯데월드")
-    except:
-	    return "없음"
+#     # print(model.wv.vectors.shape)
+#     # print(model.wv.similarity('사무실', '서울숲 피크닉'))
+#     # print(model.wv.most_similar(todo))
+#     for word in dataset:
+#         try:
+#             # return "실패"
+#             similiar = model.wv.most_similar("롯데월드")
+#             v = [x[0] for x in similiar]
+#             relatedWords += v
+#         except:
+#             continue
         
 
-@app.route('/recommend/scent',methods = ['GET'])
-def recommendScent():
-    schedule = Word2Vec_KOR()
+# @app.route('/recommend/scent',methods = ['GET'])
+# def recommendScent():
+#     schedule = Word2Vec_KOR()
 
-    ### 유사도가 가장 높은 단어 반환 ###
-    # data = ['실외 액티비티', '실내 데이트', '피크닉', '저녁 모임', '비즈니스 미팅', '사무실', '가족 모임']
-    # if todo in data:
-    #     return todo
-    # todoList = model.wv.most_similar(todo)
-    # for i in range(len(todoList)):
-    #     for word in data:
-    #         if todoList[i][0]==word:
-    #             return todoList[i][0]
+#     ### 유사도가 가장 높은 단어 반환 ###
+#     # data = ['실외 액티비티', '실내 데이트', '피크닉', '저녁 모임', '비즈니스 미팅', '사무실', '가족 모임']
+#     # if todo in data:
+#     #     return todo
+#     # todoList = model.wv.most_similar(todo)
+#     # for i in range(len(todoList)):
+#     #     for word in data:
+#     #         if todoList[i][0]==word:
+#     #             return todoList[i][0]
 
 
-    scent = Scent.query.filter(Scent.description == schedule).first()
-    return jsonify(schedule)
+#     scent = Scent.query.filter(Scent.description == schedule).first()
+#     return jsonify(schedule)
+
+
+
+# @app.route('/test',methods = ['GET'])
+# def test():
+#     train_data = pd.read_csv('blog_crawling.csv', names=["title", "url", "date", "description"]) #파일명or경로 넣기
+
+#     # Null 값이 존재하는 행 제거
+#     train_data = train_data.dropna(how = 'any')
+
+#     train_data['description'] = train_data['description'].str.replace("[^ㄱ-ㅎㅏ-ㅣ가-힣 ]","",regex=True)
+
+#     # 불용어 정의
+#     stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다']
+
+#     # 형태소 분석기 OKT를 사용한 토큰화 작업 (다소 시간 소요)
+#     okt = Okt()
+#     # train_data = okt.normalize(train_data)
+#     tokenized_data = []
+#     for sentence in tqdm(train_data['description']):
+#         tokenized_sentence = okt.nouns(sentence) # 토큰화
+#         stopwords_removed_sentence = [word for word in tokenized_sentence if not word in stopwords] # 불용어 제거
+#         tokenized_data.append(stopwords_removed_sentence)
+
+#     model = Word2Vec(tokenized_data, vector_size = 100, window = 5, min_count = 5, workers = 4, sg = 0)
+
+#     # 완성된 임베딩 매트릭스의 크기 확인
+#     try:
+#     # 유사도 측정
+#         print(model.wv.most_similar("어드벤처"))
+#         print(model.wv.similarity("액티비티", "피크닉"))
+#     except KeyError:
+#         print("not in Voca")
+#     return 'finish'
+
+
+
+def control_csv(clothe, userid):
+    data = pd.read_csv('flaskr/dataset.csv')
+    data = pd.DataFrame(data)   
+    cal = calendar()
+    cal = json.loads(cal)
+    cal_li = cal['items'][0:]
+    sch_li = [] # 일정 리스트
+    sch_date = [] # 일정에 대한 date 리스트
+    match_li = []
+    to_update = []
+    ## 리스트에 요소 추가
+    for i in range(0,len(cal_li)):
+        sch_li.append(cal_li[i]['summary'])
+        sch_date.append(cal_li[i]['start'])
+    
+    dataf = data[clothe].dropna(how='any').tolist()
+    input_li = [i.replace(' ',' ') for i in dataf]   ## ['소풍','서울숲피크닉']
+    new_sch_li = [i.replace(' ',' ') for i in sch_li] # ['회의', 'LG전자면접', '서울숲피크닉', '롯데월드', '소프트웨어공학회의']
+    
+    for i in range(0,min(len(input_li),len(new_sch_li))):
+        if (new_sch_li[i] in input_li) == True:
+            match_li.append(new_sch_li[i])
+        else:
+            to_update.append(new_sch_li[i])
+ ####### 수정 해야함 !!!! #### 쿼리 delete 문제 !!!    
+    if Schedule.query.filter(Schedule.id == None):
+        for i in range(0, len(to_update)):
+            new_schdule = Schedule(id = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()  
+    else :
+        Schedule.query.filter(Schedule.user_id == userid).delete()
+        db.session.commit()                    
+    return match_li
+        
+    
+    
+@app.route('/clothe/schedule/<userid>', methods = ['POST'])
+def add_csv(userid):
+    data = request.get_json()
+    
+    '''
+    {
+        "LG전자면접" : "정장",
+        "롯데월드" : "티셔츠"
+    }
+    '''
+    
+    dataFrame = pd.read_csv('flaskr/dataset.csv')
+    dataFrame = pd.DataFrame(dataFrame)
+    data_dict = dataFrame.to_dict()
+    
+    
+    for i in range(len(data)):
+        target_num = max(list(data_dict[list(data.values())[i]].keys()))+1
+        target = list(data.keys())[i]  
+        data_dict[list(data.values())[i]].update({target_num:target}) 
+    
+    new_df = pd.DataFrame(data_dict)
+    new_df.to_csv('flaskr/dataset.csv')
+  
+    
+    Schedule.query.filter(Schedule.user_id == userid).delete()
+    db.session.commit()
+    return 'finish update!'
+    
+    
