@@ -441,16 +441,16 @@ def Word2Vec_KOR():
     print(lines)
 
     dataset = []
-    #for i in range(len(lines)):
-    #    dataset.append(okt.nouns(lines[i]))
-    #dataset = [[y for y in x if not len(y)==1] for x in dataset]
-    #dataset = [[y for y in x if not y.isdigit()] for x in dataset]
+    for i in range(len(lines)):
+        dataset.append(okt.nouns(lines[i]))
+    dataset = [[y for y in x if not len(y)==1] for x in dataset]
+    dataset = [[y for y in x if not y.isdigit()] for x in dataset]
 
-    #model = Word2Vec(dataset, sg=1, window=5, min_count=1)
-    #model.init_sims(replace = True)    
+    model = Word2Vec(dataset, sg=1, window=5, min_count=1)
+    model.init_sims(replace = True)    
 
-    #print(model.wv.similarity('서울랜드','롯데월드'))
-    #print(model.wv.most_similar("롯데월드"))
+    print(model.wv.similarity('서울랜드','롯데월드'))
+    print(model.wv.most_similar("롯데월드"))
 
     ### Word2Vec ###
     # dataset = [['롯데월드'],[]]
@@ -470,8 +470,7 @@ def Word2Vec_KOR():
     # print(model.wv.most_similar(todo))
 
     try:
-        return "실패"
-	    #return model.wv.most_similar("롯데월드")
+	    return model.wv.most_similar("롯데월드")
     except:
 	    return "없음"
         
@@ -491,5 +490,5 @@ def recommendScent():
     #             return todoList[i][0]
 
 
-    scent = Scent.query.filter(Scent.description == schedule).first()
+    # scent = Scent.query.filter(Scent.description == schedule).first()
     return jsonify(schedule)
