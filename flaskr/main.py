@@ -230,6 +230,7 @@ def need_styler(clothes,userid):
     cal_li = cal['items'][0:]
     sch_li = [] # 일정 리스트
     sch_date = [] # 일정에 대한 date 리스트
+    
     ## 리스트에 요소 추가
     for i in range(0,len(cal_li)):
         sch_li.append(cal_li[i]['summary'])
@@ -249,7 +250,8 @@ def need_styler(clothes,userid):
     day = timedel.astype('timedelta64[D]')
     day = day.astype(int)
     
-    standard = control_csv(clothes,userid) # 결과 : 티셔츠와 서울숲 피크닉 ['서울숲 피크닉'] 
+    # 데이터 셋을 통해 학습
+    standard = control_csv(clothes,userid)
     event_date = sch_dict[standard[0]]['date']
     new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
     new_timedel = np.timedelta64(new_timedel,'ns')
@@ -265,7 +267,7 @@ def need_styler(clothes,userid):
             testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
         
     if testing == 1:
-        tm = 2*day + np.exp2(6-new_day) # 기준 포인트
+        tm = 2*day + np.exp2(6-new_day) # 기준 함수
         ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
         if tm >= 8:
             need_styler_set = 0 # 매우 필요
@@ -277,7 +279,7 @@ def need_styler(clothes,userid):
             need_styler_set = 2 # 괜찮음
 
     elif testing == 0:
-        tm = 2*day + np.exp2(6-new_day) # 기준 포인트
+        tm = 2*day + np.exp2(6-new_day) # 기준 함수 
         if tm >= 8:
             need_styler_set = 0 # 매우 필요
         
@@ -296,7 +298,7 @@ def need_styler(clothes,userid):
 
 
 
-@app.route('/control/<userid>/<mode>',methods = ['POST']) ## userid 추가 ?
+@app.route('/control/<userid>/<mode>',methods = ['POST'])
 def control_styler(mode,userid):
     new_styler = Styler.query.filter(Styler.id ==1).first()
     new_control = Control.query.filter(Control.id==1).first()
@@ -537,6 +539,7 @@ def error_handler(e):
 
 
 
+
 def control_csv(clothe, userid):
     data = pd.read_csv('flaskr/dataset.csv')
     data = pd.DataFrame(data)   
@@ -547,6 +550,7 @@ def control_csv(clothe, userid):
     sch_date = [] # 일정에 대한 date 리스트
     match_li = []
     to_update = []
+    
     ## 리스트에 요소 추가
     for i in range(0,len(cal_li)):
         sch_li.append(cal_li[i]['summary'])
@@ -564,18 +568,21 @@ def control_csv(clothe, userid):
     
     
     new_sch_count = Schedule.query.filter_by(user_id=userid).first()
+    ### DB 비어있는지 확인
     if type(new_sch_count) == type(None): 
         for i in range(0, len(to_update)):
             new_schdule = Schedule(id = i+1, cont = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()                   
     return match_li
         
+        
     
-    
+### 유저를 통해 학습하는 func  
 @app.route('/clothe/schedule/<userid>', methods = ['POST'])
 def add_csv(userid):
     data = request.get_json()
     
     '''
+    ex.
     {
         "LG전자면접" : "정장",
         "롯데월드" : "티셔츠"
@@ -587,15 +594,17 @@ def add_csv(userid):
     data_dict = dataFrame.to_dict()
     
     
+    ### 학습 데이터 셋(csv) 업데이트를 위한 딕셔너리
     for i in range(len(data)):
         target_num = max(list(data_dict[list(data.values())[i]].keys()))+1
         target = list(data.keys())[i]  
         data_dict[list(data.values())[i]].update({target_num:target}) 
     
+    # Dict -> CSV 
     new_df = pd.DataFrame(data_dict)
     new_df.to_csv('flaskr/dataset.csv')
   
-    
+    # 학습을 끝난 데이터는 DB에서 삭제
     Schedule.query.filter(Schedule.user_id == userid).delete()
     db.session.commit()
     return 'finish update!'
