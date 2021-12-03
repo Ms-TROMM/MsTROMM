@@ -65,7 +65,7 @@ from flaskr.models.clothes_combination import ClothesCombination
 from flaskr.models.control import Control, controlSchema
 from flaskr.models.recommendation import Recommendation
 from flaskr.models.schedule import Schedule
-from flaskr.models.styler_alert import StylerAlert
+from flaskr.models.styler_alert import StylerAlert, alertSchema
 from flaskr.models.user_preference import UserPreference, preferSchema
 from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
@@ -164,15 +164,63 @@ def status(device):
     
 
 ## Add user Prefer
-@app.route('/user/<userid>/preference',methods = ['POST'])
+@app.route('/<userid>/preference',methods = ['POST'])
 def add_prefer(userid):
     json_data = request.get_json()
     schema = preferSchema()
-    new_prefer = UserPreference(user_id=userid, scent_id = json_data['scentid'], fashion_style= json_data['fashion'], color=json_data['color']).create()
+    new_prefer = UserPreference(user_id=userid, scent_id_one = json_data['scentid_one'],scent_id_two = json_data['scentid_two'], scent_id_three = json_data['scentid_three'],fashion_style_one= json_data['fashion_one'], fashion_style_two= json_data['fashion_two'],fashion_style_three= json_data['fashion_three'], color_one=json_data['color_one'], color_two=json_data['color_two'], color_three=json_data['color_three']).create()
     db.session.commit()
     result = schema.dump(new_prefer)
     return result
+
+    """
+    {
+"scentid_one":1,
+"scentid_two":2,
+"scentid_three":3,
+"fashion_one":"casual",
+"fashion_two":"hip",
+"fashion_three":"boxy",
+"color_one":292929,
+"color_two":292930,
+"color_three":292940
+}
+
+    """
+
+# Add clothes
+@app.route('/<userid>/clothes',methods = ['POST'])
+def add_clothes(userid):
+    json_data = request.get_json()
+    schema = clotheSchema(only=("name","user_id","clothes_type","sub_type","color","texture"))
+    new_clothe_data = Clothes(name= json_data['name'],user_id=userid, clothes_type= json_data['category'], sub_type= json_data['sub_type'], color= json_data['color'], texture= json_data['texture'] ).create()
+    result = schema.dump(new_clothe_data)
+    return result
+
+    """
+    {
+    "name":"정장1",
+    "category":"onepiece",
+    "sub_type": 3,
+    "color": 292929,
+    "texture":"울"
+}
+    """
     
+    
+@app.route('/alert/<userid>',methods = ['GET'])  
+def alert(userid):
+     ### 스타일러 상태 알림(물상태)
+     
+     ### 오늘의 추천 알림
+     
+     ### 스타일러 상태 알림(스타일러 가동)
+     
+     ### 제어 추천 관련 알림
+     
+     ### 일정 관련 알림
+     return '수정중'
+
 
 @app.route('/recommand/styler/<clothes>',methods = ['GET'])
 def need_styler(clothes):
@@ -244,8 +292,9 @@ def need_styler(clothes):
     return result
 
 
-@app.route('/styler/control/<mode>',methods = ['GET'])
-def control_styler(mode):
+
+@app.route('/control/<userid>/<mode>',methods = ['POST']) ## userid 추가 ?
+def control_styler(mode,userid):
     new_styler = Styler.query.filter(Styler.id ==1).first()
     new_control = Control.query.filter(Control.id==1).first()
     schema_sty = stylerSchema()
@@ -262,18 +311,30 @@ def control_styler(mode):
         if c[1] < 2:
             ## 스타일러 모드를 받아와서 실행시킬 모드를 1로 turn on하고 db에 상태 저장
             new_control.data = {mode : 1}
-            Control.query.filter_by(id=1).update(new_control.data)
+            Control.query.filter_by(id=userid).update(new_control.data)
             db.session.commit()
             update_schema = schema_con.dump(new_control)
             
             ## restful_api로 상태 반환
             return update_schema
-        else :
-            return '스타일러가 가동중입니다.'
+        else:
+            status = { "status" : 1 } # 스타일러 가동중
+            return jsonify(status)
     else:
-        return 'disconnected'
+        conn = { "connection" : 0 } # 스타일러 연결 X
+        return jsonify(conn)
 
-    
+
+@app.route('/control/<userid>',methods = ['GET'])
+def control_state(userid):
+    conn_dict = {"styler_connection" : Styler.query.filter(Styler.id ==userid).first().connection, "mirror_connection" : Mirror.query.filter(Mirror.id==userid).first().connection}
+    new_control = Control.query.filter(Control.id==userid).first()
+    schema = controlSchema()
+    result = schema.dump(new_control)
+    result = {**conn_dict, **result}
+    return result
+
+
 @app.route('/recommand/today/<userid>', methods=['GET'])
 def recommand_today(userid):
     name = User.query.filter_by(id=userid).first().username

@@ -52,8 +52,7 @@ class controlSchema(Schema):
     autodry = fields.Integer()
     indoor_dehumification = fields.Integer()
     reserv = fields.Integer()
-    
-    
+
 
 # CREATE TABLE control (
 #   id INTEGER PRIMARY KEY AUTOINCREMENT, 
