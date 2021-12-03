@@ -553,21 +553,20 @@ def control_csv(clothe, userid):
         sch_date.append(cal_li[i]['start'])
     
     dataf = data[clothe].dropna(how='any').tolist()
-    input_li = [i.replace(' ',' ') for i in dataf]   ## ['소풍','서울숲피크닉']
-    new_sch_li = [i.replace(' ',' ') for i in sch_li] # ['회의', 'LG전자면접', '서울숲피크닉', '롯데월드', '소프트웨어공학회의']
+    input_li = [i.replace(' ',' ') for i in dataf] 
+    new_sch_li = [i.replace(' ',' ') for i in sch_li]
     
     for i in range(0,min(len(input_li),len(new_sch_li))):
         if (new_sch_li[i] in input_li) == True:
             match_li.append(new_sch_li[i])
         else:
             to_update.append(new_sch_li[i])
- ####### 수정 해야함 !!!! #### 쿼리 delete 문제 !!!    
-    if Schedule.query.filter(Schedule.id == None):
+    
+    
+    new_sch_count = Schedule.query.filter_by(user_id=userid).first()
+    if type(new_sch_count) == type(None): 
         for i in range(0, len(to_update)):
-            new_schdule = Schedule(id = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()  
-    else :
-        Schedule.query.filter(Schedule.user_id == userid).delete()
-        db.session.commit()                    
+            new_schdule = Schedule(id = i+1, cont = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()                   
     return match_li
         
     
