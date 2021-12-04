@@ -9,7 +9,7 @@
 ##### EO JIN LEE, Department of Information System
 ----------
 ## ✨ Details
-https://dot-nasturtium-ee3.notion.site/Ms-TROMM-60cbd1c9759f438e8e7ede45385a6d1b
+https://dot-nasturtium-ee3.notion.site/Ms-TROMM-e65d5d40ac7044b797a5c9955d5e4b8d
 
 
 ---
