@@ -168,6 +168,7 @@ def check_username(userid):
     schema = UserSchema()
     result = schema.dump(name)
     return result
+
     
 ## Add user Prefer
 @app.route('/preferences/<userid>',methods = ['POST'])
@@ -206,24 +207,7 @@ def add_prefer(userid):
 
     """
 
-# Add clothes
-@app.route('/<userid>/clothes',methods = ['POST'])
-def add_clothes(userid):
-    json_data = request.get_json()
-    schema = clotheSchema(only=("name","user_id","clothes_type","sub_type","color","texture"))
-    new_clothe_data = Clothes(name= json_data['name'],user_id=userid, clothes_type= json_data['category'], sub_type= json_data['sub_type'], color= json_data['color'], texture= json_data['texture'] ).create()
-    result = schema.dump(new_clothe_data)
-    return result
 
-    """
-    {
-    "name":"정장1",
-    "category":"onepiece",
-    "sub_type": 3,
-    "color": 292929,
-    "texture":"울"
-}
-    """
 
 class HomeSchema(Schema):
     userid = fields.Integer()
@@ -478,6 +462,28 @@ def check_closet(userid):
     return jsonify(dict_li)
 
 
+
+## 내 옷장에 새 옷 등록(Add clothes)
+@app.route('/users/clothes/<userid>',methods = ['POST'])
+def add_clothes(userid):
+    json_data = request.get_json()
+    schema = clotheSchema(only=("name","user_id","clothes_type","sub_type","color","texture"))
+    new_clothe_data = Clothes(name= json_data['name'],user_id=userid, clothes_type= json_data['category'], sub_type= json_data['sub_type'], color= json_data['color'], texture= json_data['texture'] ).create()
+    result = schema.dump(new_clothe_data)
+    return result
+
+    """
+    {
+    "name":"정장1",
+    "category":"onepiece",
+    "sub_type": 3,
+    "color": 292929,
+    "texture":"울"
+}
+    """
+
+
+
 @app.route('/weather/<city>', methods=['GET'])
 def weatherinfo(city):
     schema = weatherSchema()
@@ -504,9 +510,11 @@ def weatherinfo(city):
         
 
 
+
 @app.route('/')
 def root():
     return '<h1>Welcome to ms-tromm API</h1>'
+
 
 
 ### error handler ###
@@ -521,6 +529,7 @@ def error_handler(e):
     })
     response.content_type = 'application/json'
     return response
+
 
 
 
@@ -560,6 +569,7 @@ def control_csv(clothe, userid):
         
         
     
+    
 ### 유저를 통해 학습하는 func  
 @app.route('/clothe/schedule/<userid>', methods = ['POST'])
 def add_csv(userid):
@@ -587,6 +597,7 @@ def add_csv(userid):
     # Dict -> CSV 
     new_df = pd.DataFrame(data_dict)
     new_df.to_csv('flaskr/dataset.csv')
+  
   
     # 학습을 끝난 데이터는 DB에서 삭제
     Schedule.query.filter(Schedule.user_id == userid).delete()
