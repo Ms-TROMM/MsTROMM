@@ -434,8 +434,6 @@ def error_handler(e):
     response.content_type = 'application/json'
     return response
 
-<<<<<<< HEAD
-=======
 
 # # from konlpy.tag import Okt
 # from konlpy.tag import Okt
@@ -611,9 +609,3 @@ def add_csv(userid):
     db.session.commit()
     return 'finish update!'
     
-<<<<<<< HEAD
-    
->>>>>>> e6fbdd0fea7689165e5f5a6b03dfbdb50d09d534
-=======
-    
->>>>>>> e6fbdd0fea7689165e5f5a6b03dfbdb50d09d534
