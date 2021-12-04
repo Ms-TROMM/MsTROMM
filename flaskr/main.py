@@ -502,3 +502,15 @@ def add_csv(userid):
     db.session.commit()
     return 'finish update!'
     
+
+@app.route('/recommend/scent/<userid>', methods = ['GET'])
+def recommendScent(userid):
+    schedule = Schedule.query.filter(Schedule.user_id==userid).first().title
+    sex = User.query.filter(User.id==userid).first().sex
+
+    try:
+        result = Scent.query.filter(Scent.description==schedule and Scent.sex==sex).first().name
+        return jsonify(result)
+    except:
+        return "추천 향이 없습니다."
+
