@@ -9,7 +9,6 @@ import datetime
 import openpyxl
 import pandas as pd
 import numpy as np
-from konlpy.tag import Okt
 from os import environ
 from ssl import _create_default_https_context
 from typing import KeysView
@@ -26,8 +25,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from collections import Counter
-from gensim.models.word2vec import Word2Vec
-from gensim.models import Word2Vec
 from marshmallow import Schema, fields
 
 
