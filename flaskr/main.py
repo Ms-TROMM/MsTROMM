@@ -162,7 +162,7 @@ def status(device):
     
 
 ## Add user Prefer
-@app.route('/<userid>/preference',methods = ['POST'])
+@app.route('/preferences/<userid>',methods = ['POST'])
 def add_prefer(userid):
     json_data = request.get_json()
     schema = preferSchema()
@@ -182,6 +182,18 @@ def add_prefer(userid):
 "color_one":292929,
 "color_two":292930,
 "color_three":292940
+}
+
+    {
+"scentid_one":"woody",
+"scentid_two":"citrus",
+"scentid_three":"green",
+"fashion_one":"relax",
+"fashion_two":"coat,
+"fashion_three":"clean",
+"color_one":"green",
+"color_two":"yellow",
+"color_three":"ivory"
 }
 
     """
@@ -206,7 +218,7 @@ def add_clothes(userid):
     """
     
     
-@app.route('/alert/<userid>',methods = ['GET'])  
+@app.route('/alerts/<userid>',methods = ['GET'])  
 def alert(userid):
      ### 스타일러 상태 알림(물상태)
      
