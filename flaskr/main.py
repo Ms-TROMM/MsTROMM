@@ -275,7 +275,35 @@ def alert(userid):
      ### 일정 관련 알림
      return '수정중'
 
-##### 오늘의 추천
+##### 오늘의 추천(수정중 ....... )
+@app.route('/recommand/today/<userid>', methods=['GET'])
+def recommand_today(userid):
+    name = User.query.filter_by(id=userid).first().username
+    info = weatherinfo('Seoul')
+    daily = info['daily'] # 일교차: 1 = 큼 / 0 = 크지 않음
+    high_temp = info['high_temp'] # 최고기온
+    low_temp = info['low_temp'] # 최저기온
+    cal = calendar()
+    cal = json.loads(cal)
+    cal_li = cal['items'][0:]
+    sch_li = [] # 일정 리스트
+    sch_date = [] # 일정에 대한 date 리스트
+    ## 리스트에 요소 추가
+    for i in range(0,len(cal_li)):
+        sch_li.append(cal_li[i]['summary']) # 스케쥴 리스트
+        sch_date.append(cal_li[i]['start']) # 스케쥴 날짜
+    
+    
+    # 이름, 최고온도, 최저온도, 일교차, 스케쥴 리스트
+    result = {
+        "name":name,
+        "max_temp":high_temp,
+        "min_temp":low_temp,
+        "daily":daily,
+        "schedule":sch_li
+    }
+
+    return jsonify(result)
 
 
 ##### 제어추천
@@ -295,6 +323,64 @@ def control_recom(userid):
     "indoor_temp" : temp
     }
     return jsonify(data)
+
+
+
+###### Styler Part
+
+### 스타일러 상태 조회
+@app.route('/state/stylers/<userid>',methods = ['GET'])
+def check_state(userid):
+    new_control = Control.query.filter(Control.id==userid).first()
+    
+    ## 스타일러 가동 중
+    if (new_control.ready+new_control.refresh+new_control.dry) > 0:
+        turn_on = 1
+    
+    ## 스타일러 가동 X
+    else:
+        turn_on = 0
+    conn_dict = {"styler_connection" : Styler.query.filter(Styler.id ==userid).first().connection, "mirror_connection" : Mirror.query.filter(Mirror.id==userid).first().connection, "turn_on":turn_on}
+    new_control = Control.query.filter(Control.id==userid).first()
+    schema = controlSchema(only=("reserv","ready","refresh","dry"))
+    result = schema.dump(new_control)
+    result = {**conn_dict, **result}
+    return result
+
+
+### 스타일러 모드 변경(업데이트)
+@app.route('/state/stylers/<userid>',methods = ['PATCH'])
+def control_styler(userid):
+    mode = request.get_json()["mode"]
+    new_styler = Styler.query.filter(Styler.id ==1).first()
+    new_control = Control.query.filter(Control.id==1).first()
+    schema_sty = stylerSchema()
+    schema_con = controlSchema()
+    result_con = schema_con.dump(new_control)
+    result = schema_sty.dump(new_styler)
+    c = Counter(result_con.values())
+    
+    ## 스타일러 연결 상태 체크
+    if result['connection'] == 1:
+        ##  counter로 1의 갯수를 세서, 기능이 모두 off 일때만 새로운 기능을 on 할 수 있도록
+        ## ex. id는 무조건 1이상이므로, 예약을 포함한 작동 중 기능 모두 꺼져 있어야 함
+        ## 다만, 자동건조와, 자동제습은 제외
+        if c[1] - (new_control.indoor_dehumification+new_control.autodry) < 2:
+            ## 스타일러 모드를 받아와서 실행시킬 모드를 1로 turn on하고 db에 상태 저장
+            new_control.data = {mode : 1}
+            Control.query.filter_by(id=userid).update(new_control.data)
+            db.session.commit()
+            # update_schema = schema_con.dump(new_control)
+            
+            ## restful_api로 상태 반환
+            # return update_schema
+            return 'update 완료!'
+        else:
+            return '현재 스타일러가 실행 중입니다!'
+    else:
+        return '스타일러 연결에 실패하였습니다.'
+
+#### 내옷장 Part    
 
 @app.route('/recommand/styler/<clothes>/<userid>',methods = ['GET'])
 def need_styler(clothes,userid):
@@ -369,78 +455,6 @@ def need_styler(clothes,userid):
     result = schema.dump(new_clothes)
     return result
 
-
-
-@app.route('/control/<userid>/<mode>',methods = ['POST'])
-def control_styler(mode,userid):
-    new_styler = Styler.query.filter(Styler.id ==1).first()
-    new_control = Control.query.filter(Control.id==1).first()
-    schema_sty = stylerSchema()
-    schema_con = controlSchema()
-    result_con = schema_con.dump(new_control)
-    result = schema_sty.dump(new_styler)
-    c = Counter(result_con.values())
-    
-    ## 스타일러 연결 상태 체크
-    if result['connection'] == 1:
-        
-        ##  counter로 1의 갯수를 세서, 기능이 모두 off 일때만 새로운 기능을 on 할 수 있도록
-        ## ex. id는 무조건 1이상이므로, 예약을 포함한 작동 중 기능 모두 꺼져 있어야 함
-        if c[1] < 2:
-            ## 스타일러 모드를 받아와서 실행시킬 모드를 1로 turn on하고 db에 상태 저장
-            new_control.data = {mode : 1}
-            Control.query.filter_by(id=userid).update(new_control.data)
-            db.session.commit()
-            update_schema = schema_con.dump(new_control)
-            
-            ## restful_api로 상태 반환
-            return update_schema
-        else:
-            status = { "status" : 1 } # 스타일러 가동중
-            return jsonify(status)
-    else:
-        conn = { "connection" : 0 } # 스타일러 연결 X
-        return jsonify(conn)
-
-
-@app.route('/control/<userid>',methods = ['GET'])
-def control_state(userid):
-    conn_dict = {"styler_connection" : Styler.query.filter(Styler.id ==userid).first().connection, "mirror_connection" : Mirror.query.filter(Mirror.id==userid).first().connection}
-    new_control = Control.query.filter(Control.id==userid).first()
-    schema = controlSchema()
-    result = schema.dump(new_control)
-    result = {**conn_dict, **result}
-    return result
-
-
-@app.route('/recommand/today/<userid>', methods=['GET'])
-def recommand_today(userid):
-    name = User.query.filter_by(id=userid).first().username
-    info = weatherinfo('Seoul')
-    daily = info['daily'] # 일교차: 1 = 큼 / 0 = 크지 않음
-    high_temp = info['high_temp'] # 최고기온
-    low_temp = info['low_temp'] # 최저기온
-    cal = calendar()
-    cal = json.loads(cal)
-    cal_li = cal['items'][0:]
-    sch_li = [] # 일정 리스트
-    sch_date = [] # 일정에 대한 date 리스트
-    ## 리스트에 요소 추가
-    for i in range(0,len(cal_li)):
-        sch_li.append(cal_li[i]['summary']) # 스케쥴 리스트
-        sch_date.append(cal_li[i]['start']) # 스케쥴 날짜
-    
-    
-    # 이름, 최고온도, 최저온도, 일교차, 스케쥴 리스트
-    result = {
-        "name":name,
-        "max_temp":high_temp,
-        "min_temp":low_temp,
-        "daily":daily,
-        "schedule":sch_li
-    }
-
-    return jsonify(result)
 
 
 @app.route('/recommand/control/<userid>', methods=['GET'])
