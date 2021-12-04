@@ -611,5 +611,9 @@ def add_csv(userid):
     db.session.commit()
     return 'finish update!'
     
+<<<<<<< HEAD
+    
+>>>>>>> e6fbdd0fea7689165e5f5a6b03dfbdb50d09d534
+=======
     
 >>>>>>> e6fbdd0fea7689165e5f5a6b03dfbdb50d09d534
