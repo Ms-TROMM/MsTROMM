@@ -56,7 +56,7 @@ ma = Marshmallow(app)
 ########## DO NOT DELETE THESE IMPORT STATEMENTS ###########
 
 
-from flaskr.models.user import User
+from flaskr.models.user import User, UserSchema
 from flaskr.models.clothes import Clothes, clotheSchema
 from flaskr.models.scent import Scent
 from flaskr.models.clothes_combination import ClothesCombination
@@ -162,6 +162,13 @@ def status(device):
         return 'device not found'
     
 
+@app.route('/users/names/<userid>', methods=['GET'])
+def check_username(userid):
+    name = {"username" : User.query.filter_by(id=userid).first().username}
+    schema = UserSchema()
+    result = schema.dump(name)
+    return result
+    
 ## Add user Prefer
 @app.route('/preferences/<userid>',methods = ['POST'])
 def add_prefer(userid):
@@ -233,6 +240,8 @@ class HomeSchema(Schema):
     indoor_humidity = fields.Integer()
     indoor_temp = fields.Integer()
     now_mode = fields.String()
+    username = fields.String()
+
 
 ## Load Home info
 @app.route('/home/<userid>/<city>',methods = ['GET'])   
@@ -242,6 +251,7 @@ def get_homeinfo(userid,city):
     new_styler = Styler.query.filter_by(id=userid).first()
     data = {
     "userid" : userid,
+    "username": User.query.filter_by(id=userid).first().username,
     "today_date" : datetime.datetime.today().strftime('%d'),
     "today_week" : t[datetime.datetime.today().weekday()],
     "now_temp" : int(temp['main']['temp'])-273.15,
@@ -274,6 +284,7 @@ def alert(userid):
      
      ### 일정 관련 알림
      return '수정중'
+
 
 ##### 오늘의 추천(수정중 ....... )
 @app.route('/recommand/today/<userid>', methods=['GET'])
@@ -317,6 +328,7 @@ def control_recom(userid):
     temp = Styler.query.filter(Styler.id == userid).first().temperature
     data = { 
     "userid": int(userid),
+    "username": User.query.filter_by(id=userid).first().username,
     "is_inside_styler" : is_inside,
     "texture" : texture,
     "course" : recom[texture],
@@ -380,8 +392,8 @@ def control_styler(userid):
     else:
         return '스타일러 연결에 실패하였습니다.'
 
-#### 내옷장 Part    
-
+#### 내옷장 Part  
+## 전체 조회 ?? 어쩌지 ?
 @app.route('/recommand/styler/<clothes>/<userid>',methods = ['GET'])
 def need_styler(clothes,userid):
     cal = calendar()
@@ -456,25 +468,14 @@ def need_styler(clothes,userid):
     return result
 
 
-
-@app.route('/recommand/control/<userid>', methods=['GET'])
-def recommand_control(userid):
-    name = User.query.filter_by(id=userid).first().username
-    indoor_temp = Styler.query.filter_by(id=userid).first().temperature
-    indoor_humidity = Styler.query.filter_by(id=userid).first().humidity
-    inside = Clothes.query.filter(Clothes.is_inside_styler==1).all()
-    inside_li = []
-    for i in range(0,len(inside)):
-        inside_li.append(inside[i].name)
-    
-    # 이름, 집안 온도, 집안 습도, 스타일러 내 있는 옷
-    result = {
-        "name":name,
-        "indoor_temp":indoor_temp,
-        "indoor_humidity":indoor_humidity,
-        "inside_list":inside_li
-    }
-    return jsonify(result)
+## 내 옷장 조회
+@app.route('/users/clothes/<userid>', methods=['GET'])
+def check_closet(userid):
+    closet = Clothes.query.filter(Clothes.user_id == userid).all()
+    dict_li = []
+    for i in range(0,len(closet)):
+        dict_li.append({"id":closet[i].id, "name":closet[i].name, "need_styler":closet[i].need_styler, "is_inside_styler":closet[i].is_inside_styler})
+    return jsonify(dict_li)
 
 
 @app.route('/weather/<city>', methods=['GET'])

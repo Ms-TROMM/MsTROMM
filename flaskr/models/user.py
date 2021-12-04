@@ -1,4 +1,5 @@
 from ..main import db
+from marshmallow import Schema, fields
 
 
 class User(db.Model):
@@ -39,3 +40,12 @@ class User(db.Model):
         db.session.commit()
         return self
 
+
+class UserSchema(Schema):
+    id = fields.Integer()
+    username = fields.String()
+    email = fields.String()
+    password = fields.String()  
+    sex = fields.Integer()
+    birth_year = fields.Integer()
+    push = fields.Integer()
