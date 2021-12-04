@@ -54,7 +54,7 @@ class clotheSchema(Schema):
     is_inside_styler = fields.Integer()
     color = fields.Integer()
     texture = fields.String()  
-    sub_type = fields.Integer()     
+    sub_type = fields.Integer()
         
 
     def create(self):

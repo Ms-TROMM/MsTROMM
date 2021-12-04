@@ -67,6 +67,7 @@ from flaskr.models.styler_alert import StylerAlert, alertSchema
 from flaskr.models.user_preference import UserPreference, preferSchema
 from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
+
 db.create_all()
 
 
@@ -216,7 +217,50 @@ def add_clothes(userid):
     "texture":"울"
 }
     """
+
+class HomeSchema(Schema):
+    userid = fields.Integer()
+    today_date = fields.String()
+    today_week = fields.String()
+    now_temp = fields.Integer()
+    max_temp = fields.Integer()
+    min_temp = fields.Integer()
+    mirror_connection = fields.Integer()
+    styler_connection = fields.Integer()
+    styler_water = fields.Integer()
+    dehumification_connect = fields.Integer()
+    dry_connect = fields.Integer()
+    indoor_humidity = fields.Integer()
+    indoor_temp = fields.Integer()
+    now_mode = fields.String()
+
+## Load Home info
+@app.route('/home/<userid>/<city>',methods = ['GET'])   
+def get_homeinfo(userid,city):
+    t = ['월','화','수','목','금','토','일']
+    temp = getWeather(city)
+    new_styler = Styler.query.filter_by(id=userid).first()
+    data = {
+    "userid" : userid,
+    "today_date" : datetime.datetime.today().strftime('%d'),
+    "today_week" : t[datetime.datetime.today().weekday()],
+    "now_temp" : int(temp['main']['temp'])-273.15,
+    "max_temp" : int(temp['main']['temp_max'])-273.15,
+    "min_temp" : int(temp['main']['temp_min'])-273.15,
+    "mirror_connection" : Mirror.query.filter_by(id=userid).first().connection,
+    "styler_connection" : new_styler.connection,
+    "styler_water" : new_styler.water_percentage,
+    "dehumification_connect" : new_styler.dehumification_connect,
+    "dry_connect" : new_styler.dry_connect,
+    "indoor_humidity" : new_styler.humidity,
+    "indoor_temp" : new_styler.temperature,
+    "now_mode" : new_styler.now_mode
+    }
+    schema = HomeSchema()
+    result = schema.dump(data)
+    return result
     
+
     
 @app.route('/alerts/<userid>',methods = ['GET'])  
 def alert(userid):
@@ -231,6 +275,26 @@ def alert(userid):
      ### 일정 관련 알림
      return '수정중'
 
+##### 오늘의 추천
+
+
+##### 제어추천
+@app.route('/recommands/control/<userid>', methods = ['GET']) 
+def control_recom(userid):
+    recom = {
+        '울':['고급의류 코스','섬세건조 코스','스팀살균 코스']
+    }
+    texture = Clothes.query.filter(Clothes.user_id == userid).first().texture
+    is_inside = Clothes.query.filter((Clothes.user_id == userid) & (Clothes.is_inside_styler==1)).first().name
+    temp = Styler.query.filter(Styler.id == userid).first().temperature
+    data = { 
+    "userid": int(userid),
+    "is_inside_styler" : is_inside,
+    "texture" : texture,
+    "course" : recom[texture],
+    "indoor_temp" : temp
+    }
+    return jsonify(data)
 
 @app.route('/recommand/styler/<clothes>/<userid>',methods = ['GET'])
 def need_styler(clothes,userid):
