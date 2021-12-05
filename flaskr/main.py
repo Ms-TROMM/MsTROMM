@@ -6,11 +6,6 @@ import os.path
 import connexion
 import json
 import datetime
-<<<<<<< HEAD
-from datetime import datetime
-import openpyxl
-=======
->>>>>>> 3e34e3b7902a632f3d7e08e5f3fe4e8b69d8d298
 import pandas as pd
 import numpy as np
 from os import environ
@@ -208,7 +203,7 @@ def add_prefer(userid):
 "scentid_two":"citrus",
 "scentid_three":"green",
 "fashion_one":"relax",
-"fashion_two":"coat,
+"fashion_two":"coat",
 "fashion_three":"clean",
 "color_one":"green",
 "color_two":"yellow",
