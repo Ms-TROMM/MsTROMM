@@ -274,8 +274,21 @@ def alert(userid):
      
      ### 제어 추천 관련 알림
      
-     ### 일정 관련 알림
-     return '수정중'
+     ### 일정 관련 알림 - 테스트 필요
+    now = datetime.today().strftime('%y-%m-%d')
+    cal = calendar()
+    cal = json.loads(cal)
+    cal_li = cal['items'][0:]
+    todo = '일정이 없습니다.'
+    des = '오늘은 일정이 없습니다.'
+    for i in range(0,len(cal_li)):
+        if cal_li[i]['start'] == now:
+            todo = cal_li[i]['summary']
+            des = "오늘의 일정은 " + todo + "입니다."
+    alert = StylerAlert(user_id = userid, title = "일정알림", description = des)
+    db.session.commit()
+    
+    return '수정중'
 
 
 ##### 오늘의 추천(수정중 ....... )
