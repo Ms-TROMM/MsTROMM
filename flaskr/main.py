@@ -277,6 +277,8 @@ def alert(userid):
 
 
     ### "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
+
+
     ### "스타일러 상태" 알림(물상태)
     waterState = 100 # Styler 테이블의 water_percentage 애트리뷰트 값 받아오기
     if waterState >= 100:
@@ -288,6 +290,7 @@ def alert(userid):
         alert = StylerAlert(user_id = userid, title = "스타일러 상태", description = des)
         db.session.commit
      
+    
     ### "일정" 알림 - 테스트 필요
     now = datetime.today().strftime('%y-%m-%d')
     cal = calendar()
