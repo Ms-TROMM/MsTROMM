@@ -30,14 +30,19 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from collections import Counter
 from marshmallow import Schema, fields
+from flasgger import Swagger
 
 
-connexion_app = connexion.App(__name__, specification_dir='./')
+# connexion_app = connexion.App(__name__, specification_dir='./')
 
-connexion_app.add_api('swagger.yml')
+# connexion_app.add_api('swagger.yml')
 
-app = connexion_app.app
-CORS(app)
+# app = connexion_app.app
+# CORS(app)
+
+app = Flask(__name__)
+swagger = Swagger(app)
+
 
 # Since you’re not creating an event-driven program, turn this feature off.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -71,6 +76,7 @@ from flaskr.models.styler_alert import StylerAlert, alertSchema
 from flaskr.models.user_preference import UserPreference, preferSchema
 from flaskr.models.styler import Styler, stylerSchema
 from flaskr.models.mirror import Mirror,MirrorSchema
+
 
 db.create_all()
 
@@ -153,17 +159,17 @@ class weatherSchema(Schema):
 def status(device):
     new_styler = Styler.query.filter(Styler.id ==1).first()
     new_mirror = Mirror.query.filter(Mirror.id ==1).first()
-    print(type(new_mirror))
     schema_st = stylerSchema()
     schema_mi = stylerSchema(only=("id","connection"))
     if device == 'styler':
         result = schema_st.dump(new_styler)
-        return result
+        return jsonify(result)
     elif device == 'mirror':
         result = schema_mi.dump(new_mirror)
-        return result
+        return jsonify(result)
     else:
         return 'device not found'
+    
     
 
 @app.route('/users/names/<userid>', methods=['GET'])
