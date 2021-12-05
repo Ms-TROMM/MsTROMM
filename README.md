@@ -10,10 +10,3 @@
 ----------
 ## ✨ Details
 https://dot-nasturtium-ee3.notion.site/Ms-TROMM-e65d5d40ac7044b797a5c9955d5e4b8d
-
-
----
-
-- https://flask.palletsprojects.com/en/2.0.x/tutorial/layout/ 와 같은 폴더 구조를 따른다. 
-
-
