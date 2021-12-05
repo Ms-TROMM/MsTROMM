@@ -614,7 +614,7 @@ def add_csv(userid):
     return 'finish update!'
 
 
-##### 오늘의 추천 #####
+##### 오늘의 추천 
 @app.route('/recommend/today/<city>/<userid>', methods = ['GET'])
 def recommendToday(city, userid):
     items = getWeather(city)
@@ -641,13 +641,16 @@ def recommendToday(city, userid):
         season = "겨울"
 
     result = {
-        "top" : data_dict['top'][i],
-        "down" : data_dict['down'][i],
+        "top" : data_dict['top'][key],
+        "down" : data_dict['down'][key],
         "scent" : Scent.query.filter(Scent.description==season).first().name
     }
 
-    StylerAlert(user_id=userid, title="오늘의 추천", description="오늘의 추천 입니다", created_at=datetime.today().strftime('%y-%m-%d %H:%M:%S'))
-    db.session.commit
+    ### styler_alert ###
+    # now = datetime.today().strftime('%y-%m-%d %H:%M:%S')
+    des = "오늘의 추천은"+result['top']+"와(과)"+result['down']+", 그리고"+result['scent']+"입니다."
+    alert = StylerAlert(user_id = userid, title = "오늘의 추천", description = des)
+    db.session.commit()
 
     return jsonify(result)
 
