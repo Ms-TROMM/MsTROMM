@@ -8,9 +8,8 @@ class Scent(db.Model):
     name = db.Column(db.String(30), nullable=False)
     description = db.Column(db.String(255), nullable=False)
 
-    def __init__(self, name, sex, description):
+    def __init__(self, name, description):
         self.name = name
-        self.sex = sex
         self.description = description
         
     def create(self):

@@ -205,7 +205,7 @@ def add_prefer(userid):
 "scentid_two":"citrus",
 "scentid_three":"green",
 "fashion_one":"relax",
-"fashion_two":"coat,
+"fashion_two":"coat",
 "fashion_three":"clean",
 "color_one":"green",
 "color_two":"yellow",

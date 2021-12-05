@@ -2,9 +2,9 @@ from .. main import db
 from marshmallow import Schema, fields
 import enum
 
-
-class FashionStyle(enum.Enum):
-    no = 0
+'''
+FashionStyle:
+    no = 15
     relax = 1
     coat = 2
     clean = 3
@@ -12,8 +12,8 @@ class FashionStyle(enum.Enum):
     street = 5
     modern = 6
 
-class LikeColor(enum.Enum):
-    no = 0
+LikeColor:
+    no = 15
     black = 1
     gray = 2
     navy = 3
@@ -24,7 +24,7 @@ class LikeColor(enum.Enum):
     lavenda = 8
     yellow = 9
 
-class LikeScent(enum.Enum):
+LikeScent:
     no = 15
     citrus = 1
     floral = 2
@@ -34,25 +34,24 @@ class LikeScent(enum.Enum):
     musk = 7
     aromatic = 8
     woody = 6
+    
+    '''
 
 class UserPreference(db.Model):
     __tablename__ = 'user_preference'
 
     id = db.Column(db.Integer, primary_key=True, default=1, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    scent_id_one = db.Column(db.Enum(LikeScent), nullable=False)
-    scent_id_two = db.Column(db.Enum(LikeScent), nullable=True)
-    scent_id_three = db.Column(db.Enum(LikeScent), nullable=True)
-    fashion_style_one = db.Column(db.Enum(FashionStyle), nullable=False)
-    fashion_style_two = db.Column(db.Enum(FashionStyle), nullable=True)
-    fashion_style_three = db.Column(db.Enum(FashionStyle), nullable=True)
-    color_one = db.Column(db.Enum(LikeColor), nullable=False)
-    color_two = db.Column(db.Enum(LikeColor), nullable=True)
-    color_three = db.Column(db.Enum(LikeColor), nullable=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    scent_id_one = db.Column(db.String(100), nullable=False)
+    scent_id_two = db.Column(db.String(100), nullable=True)
+    scent_id_three = db.Column(db.String(100), nullable=True)
+    fashion_style_one = db.Column(db.String(100), nullable=False)
+    fashion_style_two = db.Column(db.String(100), nullable=True)
+    fashion_style_three = db.Column(db.String(100), nullable=True)
+    color_one = db.Column(db.String(100), nullable=False)
+    color_two = db.Column(db.String(100), nullable=True)
+    color_three = db.Column(db.String(100), nullable=True)
     
-
-    def __repr__(self):
-        return '<User %r>' % self.username
 
     def __init__(self, user_id, scent_id_one, scent_id_two, scent_id_three, fashion_style_one, fashion_style_two, fashion_style_three, color_one, color_two, color_three):
         # enable list of fashion style & color ? 
@@ -83,4 +82,4 @@ class preferSchema(Schema):
     fashion_style_three = fields.String()
     color_one = fields.String()
     color_two = fields.String()
-    color_three = fields.Integer()
+    color_three = fields.String()
