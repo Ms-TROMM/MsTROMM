@@ -272,15 +272,23 @@ def get_homeinfo(userid,city):
     
 @app.route('/alerts/<userid>',methods = ['GET'])  
 def alert(userid):
-     ### "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
-     ### "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
+    ### "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
+    ### "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
 
 
-     ### "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
-     ### "스타일러 상태" 알림(물상태)
+    ### "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
+    ### "스타일러 상태" 알림(물상태)
+    waterState = 100 # Styler 테이블의 water_percentage 애트리뷰트 값 받아오기
+    if waterState >= 100:
+        des = '물통에 물이 너무 많아서 스타일러 가동이 중단되었습니다. 스타일러 물통을 확인해주세요!'
+        alert = StylerAlert(user_id = userid, title = "스타일러 상태", description = des)
+        db.session.commit
+    if waterState <= 10:
+        des = '물이 부족합니다! 물을 채워주세요!'
+        alert = StylerAlert(user_id = userid, title = "스타일러 상태", description = des)
+        db.session.commit
      
-     
-     ### "일정" 알림 - 테스트 필요
+    ### "일정" 알림 - 테스트 필요
     now = datetime.today().strftime('%y-%m-%d')
     cal = calendar()
     cal = json.loads(cal)
@@ -291,7 +299,7 @@ def alert(userid):
         if cal_li[i]['start'] == now:
             todo = cal_li[i]['summary']
             des = "오늘의 일정은 " + todo + "입니다."
-    alert = StylerAlert(user_id = userid, title = "일정알림", description = des)
+    alert = StylerAlert(user_id = userid, title = "일정 알림", description = des)
     db.session.commit()
     
     return '수정중'
