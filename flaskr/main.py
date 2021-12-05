@@ -272,15 +272,15 @@ def get_homeinfo(userid,city):
     
 @app.route('/alerts/<userid>',methods = ['GET'])  
 def alert(userid):
-     ### 오늘의 추천 알림 (/recommend/today/<city>/<userid> 에 구현)
-     ### 제어 추천 관련 알림 (/recommands/control/<userid> 에 구현)
+     ### "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
+     ### "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
 
 
-     ### 스타일러 상태 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
-     ### 스타일러 상태 알림(물상태)
+     ### "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
+     ### "스타일러 상태" 알림(물상태)
      
      
-     ### 일정 관련 알림 - 테스트 필요
+     ### "일정" 알림 - 테스트 필요
     now = datetime.today().strftime('%y-%m-%d')
     cal = calendar()
     cal = json.loads(cal)
