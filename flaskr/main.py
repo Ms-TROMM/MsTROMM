@@ -6,6 +6,7 @@ import os.path
 import connexion
 import json
 import datetime
+from datetime import datetime
 import openpyxl
 import pandas as pd
 import numpy as np
@@ -603,16 +604,39 @@ def add_csv(userid):
     Schedule.query.filter(Schedule.user_id == userid).delete()
     db.session.commit()
     return 'finish update!'
+
+
+##### 오늘의 추천
+@app.route('/recommend/today/<city>/<userid>', methods = ['GET'])
+def recommendToday(city, userid):
+    items = getWeather(city)
+    temp = items['main']['temp']-273.15
     
+    dataFrame = pd.read_csv('flaskr/clothe.csv')
+    dataFrame = pd.DataFrame(dataFrame)
+    data_dict = dataFrame.to_dict()
 
-@app.route('/recommend/scent/<userid>', methods = ['GET'])
-def recommendScent(userid):
-    schedule = Schedule.query.filter(Schedule.user_id==userid).first().title
-    sex = User.query.filter(User.id==userid).first().sex
+    key = 0    
+    for i in range(7):
+        if int(temp) > int(data_dict['low_temp'][i]) and int(temp) < int(data_dict['high_temp'][i]):
+            key = i
+            break
 
-    try:
-        result = Scent.query.filter(Scent.description==schedule and Scent.sex==sex).first().name
-        return jsonify(result)
-    except:
-        return "추천 향이 없습니다."
+    today = datetime.today().strftime("%m")
+    if today in [3,4,5]:
+        season = "봄"
+    elif today in [6,7,8]:
+        season = "여름"
+    elif today in [9,10,11]:
+        season = "가을"
+    else:
+        season = "겨울"
+
+    result = {
+        "top" : data_dict['top'][i],
+        "down" : data_dict['down'][i],
+        "scent" : Scent.query.filter(Scent.description==season).first().name
+    }
+    
+    return jsonify(result)
 
