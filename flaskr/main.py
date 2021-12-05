@@ -1,4 +1,5 @@
 from __future__ import print_function
+from re import T
 import urllib.request
 import urllib
 import requests
@@ -327,6 +328,11 @@ def control_recom(userid):
     "course" : recom[texture],
     "indoor_temp" : temp
     }
+
+    des = recom[texture][0] + "을(를) 추천합니다"
+    alert = StylerAlert(user_id = userid, title = "제어 추천", description = des)
+    db.session.commit()
+
     return jsonify(data)
 
 
