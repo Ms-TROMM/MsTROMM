@@ -6,7 +6,6 @@ import os.path
 import connexion
 import json
 import datetime
-import openpyxl
 import pandas as pd
 import numpy as np
 from os import environ
@@ -304,6 +303,8 @@ def recommand_today(userid):
 ##### 제어추천
 @app.route('/recommands/control/<userid>', methods = ['GET']) 
 def control_recom(userid):
+    
+    ### recommand_data_set
     recom = {
         '울':['고급의류 코스','섬세건조 코스','스팀살균 코스']
     }
@@ -567,7 +568,7 @@ def control_csv(clothe, userid):
             new_schdule = Schedule(id = i+1, cont = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()                   
     return match_li
         
-        
+    
     
     
 ### 유저를 통해 학습하는 func  
