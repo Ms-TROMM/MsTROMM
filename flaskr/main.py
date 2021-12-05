@@ -6,11 +6,8 @@ import os.path
 import connexion
 import json
 import datetime
-<<<<<<< HEAD
 from datetime import datetime
 import openpyxl
-=======
->>>>>>> 3e34e3b7902a632f3d7e08e5f3fe4e8b69d8d298
 import pandas as pd
 import numpy as np
 from os import environ
@@ -617,7 +614,7 @@ def add_csv(userid):
     return 'finish update!'
 
 
-##### 오늘의 추천
+##### 오늘의 추천 #####
 @app.route('/recommend/today/<city>/<userid>', methods = ['GET'])
 def recommendToday(city, userid):
     items = getWeather(city)
