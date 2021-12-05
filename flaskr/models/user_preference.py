@@ -40,7 +40,7 @@ class UserPreference(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, default=1, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    scent_id_one = db.Column(db.Enum(LikeScent), db.ForeignKey('scent.id'), nullable=False)
+    scent_id_one = db.Column(db.Enum(LikeScent), nullable=False)
     scent_id_two = db.Column(db.Enum(LikeScent), nullable=True)
     scent_id_three = db.Column(db.Enum(LikeScent), nullable=True)
     fashion_style_one = db.Column(db.Enum(FashionStyle), nullable=False)
