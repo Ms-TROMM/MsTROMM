@@ -645,6 +645,9 @@ def recommendToday(city, userid):
         "down" : data_dict['down'][i],
         "scent" : Scent.query.filter(Scent.description==season).first().name
     }
-    
+
+    StylerAlert(user_id=userid, title="오늘의 추천", description="오늘의 추천 입니다", created_at=datetime.today().strftime('%y-%m-%d %H:%M:%S'))
+    db.session.commit
+
     return jsonify(result)
 
