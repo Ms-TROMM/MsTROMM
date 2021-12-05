@@ -272,13 +272,13 @@ def get_homeinfo(userid,city):
     
 @app.route('/alerts/<userid>',methods = ['GET'])  
 def alert(userid):
+     ### 오늘의 추천 알림 (/recommend/today/<city>/<userid> 에 구현)
+     ### 제어 추천 관련 알림 (/recommands/control/<userid> 에 구현)
+
+
+     ### 스타일러 상태 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
      ### 스타일러 상태 알림(물상태)
      
-     ### 오늘의 추천 알림
-     
-     ### 스타일러 상태 알림(스타일러 가동)
-     
-     ### 제어 추천 관련 알림
      
      ### 일정 관련 알림 - 테스트 필요
     now = datetime.today().strftime('%y-%m-%d')
@@ -349,6 +349,7 @@ def control_recom(userid):
     }
 
     ### styler_alert ###
+    # now = datetime.today().strftime('%y-%m-%d %H:%M:%S')
     des = recom[texture][0] + "을(를) 추천합니다" ## 수정필요
     alert = StylerAlert(user_id = userid, title = "제어 추천", description = des)
     db.session.commit()
@@ -367,6 +368,12 @@ def check_state(userid):
     ## 스타일러 가동 중
     if (new_control.ready+new_control.refresh+new_control.dry) > 0:
         turn_on = 1
+
+        ### styler_alert ###
+        # now = datetime.today().strftime('%y-%m-%d %H:%M:%S')
+        des = "스타일러가 가동 중입니다."
+        alert = StylerAlert(user_id = userid, title = "스타일러 상태", description = des)
+        db.session.commit()
     
     ## 스타일러 가동 X
     else:
