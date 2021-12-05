@@ -20,6 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
+from flaskr.Swg import Standard
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -29,11 +30,13 @@ from google.oauth2.credentials import Credentials
 from collections import Counter
 from marshmallow import Schema, fields
 from flasgger import Swagger
+from connexion.resolver import RestyResolver
+from flasgger import swag_from
 
 
 # connexion_app = connexion.App(__name__, specification_dir='./')
 
-# connexion_app.add_api('swagger.yml')
+# connexion_app.add_api('swagger.yml', resolver = RestyResolver('main'))
 
 # app = connexion_app.app
 # CORS(app)
@@ -169,13 +172,16 @@ def status(device):
         return 'device not found'
     
     
-
+    
+specs_dict = Standard().specs_dict
 @app.route('/users/names/<userid>', methods=['GET'])
+@swag_from(specs_dict)
 def check_username(userid):
     name = {"username" : User.query.filter_by(id=userid).first().username}
     schema = UserSchema()
     result = schema.dump(name)
     return result
+
 
     
 ## Add user Prefer

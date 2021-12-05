@@ -34,6 +34,43 @@ paths:
                 timestamp:
                   type: 'string'
 
+  # '/status/{device}}':
+  #   get:
+  #     operationId: main.status
+  #     parameters:
+  #       - name: device
+  #         description: device list
+  #         in: query
+  #         type: string
+  #         required: true
+  #     tags:
+  #       - 'GetState'
+  #     summary: 'test'
+  #     description: 'test1'
+  #     responses:
+  #       200:
+  #         description: 'Successful read state operation'
+  #         schema:
+  #           type: 'object'
+  #           items:
+  #             properties:
+  #               id:
+  #                 type: 'integer'
+  #               water_percentage:
+  #                 type: 'integer'
+  #               connection:
+  #                 type: 'integer'
+  #               dehumification_connect:
+  #                 type: 'integer'
+  #               dry_connect:
+  #                 type: 'integer'
+  #               humidity:
+  #                 type: 'integer'
+  #               temperature:
+  #                 type: 'integer'
+  #               now_mode:
+  #                 type: 'string'
+
   ###### 수정 중  #####
 
   # /status/{device}:
