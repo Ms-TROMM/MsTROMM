@@ -19,7 +19,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler, Water
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler, Water, ScheduleAlert, Alert
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -274,8 +274,9 @@ def get_homeinfo(userid,city):
     return result
     
 
-    
+specs_dict = Alert().specs_dict
 @app.route('/alerts/<userid>',methods = ['GET'])  
+@swag_from(specs_dict)
 def alert(userid):
     ### "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
     ### "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
@@ -284,9 +285,11 @@ def alert(userid):
     ### "스타일러 상태" 알림(물상태) (/styler/water/<userid>에 구현)
        
     ### "일정" 알림 (/schedule/<userid> 에 구현)
-    
-    
-    return '수정중'
+    values = StylerAlert.query.filter(StylerAlert.user_id==userid).all()
+    dict_li =[]
+    for i in range(0,len(values)):
+        dict_li.append({"title":values[i].title, "description":values[i].description,"created_at":values[i].created_at})
+    return jsonify(dict_li)
 
 
 specs_dict = Water().specs_dict
@@ -307,7 +310,9 @@ def water(userid):
 
 
 ## 테스트 필요
+specs_dict = ScheduleAlert().specs_dict
 @app.route('/schedule/<userid>',methods = ['GET'])  
+@swag_from(specs_dict)
 def scheduleAlert(userid):
     now = datetime.datetime.today().strftime('%y-%m-%d')
     cal = calendar()

@@ -780,3 +780,46 @@ class ScheduleAlert:
         }
     }
     }
+
+
+class Alert:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "Alert": {
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string",
+            },
+            "created_at": {
+                "type": "string"
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show past alerts",
+        "schema": {
+            "$ref": '#/definitions/Alert', 
+            },
+        "examples": {
+            "title" : "오늘의 알림",
+            "description" : "오늘은 LG전자 면접이 있습니다.",
+            "created_at" : "2021-12-03 03:39:27"
+        }
+        }
+    }
+    }
