@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -187,7 +187,9 @@ def check_username(userid):
 
     
 ## Add user Prefer
+specs_dict = AddPrefer().specs_dict
 @app.route('/preferences/<userid>',methods = ['POST'])
+@swag_from(specs_dict)
 def add_prefer(userid):
     json_data = request.get_json()
     schema = preferSchema()
@@ -527,7 +529,9 @@ def check_closet(userid):
 
 
 ## 내 옷장에 새 옷 등록(Add clothes)
+specs_dict = AddClothes().specs_dict
 @app.route('/users/clothes/<userid>',methods = ['POST'])
+@swag_from(specs_dict)
 def add_clothes(userid):
     json_data = request.get_json()
     schema = clotheSchema(only=("name","user_id","clothes_type","sub_type","color","texture"))

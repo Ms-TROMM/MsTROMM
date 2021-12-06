@@ -429,3 +429,119 @@ class TodayRecom:
 
 
 ### POST ###
+class AddPrefer:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "AddPrefer": {
+        "type": "object",
+        "properties": {
+            "scentid_one": {
+                "type": "string",
+            },
+            "scentid_two": {
+                "type": "string",
+            },
+            "scentid_three": {
+                "type": "string",
+            },
+            "fashion_one": {
+                "type": "string",
+            },
+            "fashion_two": {
+                "type": "string",
+            },
+            "fashion_three": {
+                "type": "string",
+            },
+            "color_one": {
+                "type": "string",
+            },
+            "color_two": {
+                "type": "string",
+            },
+            "color_three": {
+                "type": "string",
+            }       
+        }
+        },
+    },
+    "requests": {
+    "200": {
+        "description": "Show Add Prefer",
+        "schema": {
+            "$ref": '#/definitions/AddPrefer', 
+            },
+        "examples": {
+            "scentid_one" : "woody",
+            "scentid_two" : "citrus",
+            "scentid_three" : "green",
+            "fashion_one" : "relax",
+            "fashion_two" : "coat",
+            "fashion_three" : "clean",
+            "color_one" : "green",
+            "color_two" : "yellow",
+            "color_three" : "ivory"
+        }
+        }
+    }
+    }
+
+
+class AddClothes:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "AddClothes": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+            },
+            "category": {
+                "type": "string",
+            },
+            "subtype": {
+                "type": "integer",
+            },
+            "color": {
+                "type": "integer",
+            },
+            "texture": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "requests": {
+    "200": {
+        "description": "Show Add Clothes",
+        "schema": {
+            "$ref": '#/definitions/AddClothes', 
+            },
+        "examples": {
+            "name" : "정장1",
+            "categpry" : "onepiece",
+            "sub_type" : 3,
+            "color" : 292929,
+            "texture" : "울"
+        }
+        }
+    }
+    }
