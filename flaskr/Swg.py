@@ -175,6 +175,7 @@ class HomeInfo:
     }
     }
 
+
 class ControlRecom:
     specs_dict = {
     "parameters": [
@@ -284,7 +285,8 @@ class CheckStylerState:
     }
     }
 
-## 수정필요
+
+## 수정필요 (example 포멧 수정...)
 class Closet:
     specs_dict = {
     "parameters": [
