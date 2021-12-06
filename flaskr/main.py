@@ -297,7 +297,7 @@ def alert(userid):
      
     
     ### "일정" 알림 - 테스트 필요
-    now = datetime.today().strftime('%y-%m-%d')
+    now = datetime.datetime.today().strftime('%y-%m-%d')
     cal = calendar()
     cal = json.loads(cal)
     cal_li = cal['items'][0:]
