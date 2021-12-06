@@ -338,7 +338,7 @@ class Weather:
         {
         "name": "city",
         "in": "path",
-        "type": "integer",
+        "type": "string",
         "required": "true",
         "default": "Seoul"
         }
@@ -369,6 +369,56 @@ class Weather:
             "daily" : 0,
             "high_temp" : 9,
             "low_temp" : 8
+        }
+        }
+    }
+    }
+
+
+class todayRecom:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "city",
+        "in": "path",
+        "type": "string",
+        "required": "true",
+        "default": "Seoul"
+        },
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "TodayRecom": {
+        "type": "object",
+        "properties": {
+            "down": {
+                "type": "string",
+            },
+            "scent": {
+                "type": "string",
+            },
+            "top": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Today Recommendation",
+        "schema": {
+            "$ref": '#/definitions/TodayRecom', 
+            },
+        "examples": {
+            "down" : "청바지",
+            "scent" : "musk",
+            "top" : "패딩"
         }
         }
     }
