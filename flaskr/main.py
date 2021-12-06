@@ -19,7 +19,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -314,7 +314,9 @@ def alert(userid):
 
 
 ##### 오늘의 추천(수정중 ....... )
+specs_dict = RecomToday().specs_dict
 @app.route('/recommand/today/<userid>', methods=['GET'])
+@swag_from(specs_dict)
 def recommand_today(userid):
     name = User.query.filter_by(id=userid).first().username
     info = weatherinfo('Seoul')
@@ -442,7 +444,9 @@ def control_styler(userid):
 
 #### 내옷장 Part  
 ## 전체 조회 ?? 어쩌지 ?
+specs_dict = NeedStyler().specs_dict
 @app.route('/recommand/styler/<clothes>/<userid>',methods = ['GET'])
+@swag_from(specs_dict)
 def need_styler(clothes,userid):
     cal = calendar()
     cal = json.loads(cal)

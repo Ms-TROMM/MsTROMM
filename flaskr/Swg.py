@@ -474,7 +474,7 @@ class AddPrefer:
     },
     "responses": {
     "200": {
-        "description": "Show Add Prefer",
+        "description": "Show User Preference",
         "schema": {
             "$ref": '#/definitions/AddPrefer', 
             },
@@ -529,7 +529,7 @@ class AddClothes:
     },
     "responses": {
     "200": {
-        "description": "Show Add Clothes",
+        "description": "Show New Clothes Information",
         "schema": {
             "$ref": '#/definitions/AddClothes', 
             },
@@ -568,7 +568,7 @@ class ControlStyler:
     },
     "responses": {
     "200": {
-        "description": "Show Control Styler",
+        "description": "Show Styler Control Information",
         "schema": {
             "$ref": '#/definitions/ControlStyler', 
             },
@@ -606,7 +606,7 @@ class AddCSV:
     },
     "responses": {
     "200": {
-        "description": "Show Add CSV",
+        "description": "Match schedule and clothe",
         "schema": {
             "$ref": '#/definitions/AddCSV', 
             },
@@ -619,4 +619,95 @@ class AddCSV:
     }
 
 
+class RecomToday:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "RecomToday": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+            },
+            "max_temp": {
+                "type": "integer",
+            },
+            "min_temp": {
+                "type": "integer",
+            },
+            "daily": {
+                "type": "integer",
+            },
+            "schedule": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Today Recommendation",
+        "schema": {
+            "$ref": '#/definitions/RecomToday', 
+            },
+        "examples": {
+            "name" : "김엘지",
+            "max_temp" : 13,
+            "min_temp" : 7,
+            "daily" : 6,
+            "schedule" : "LG전자 면접"
+        }
+        }
+    }
+    }
+
+
+class NeedStyler:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "clothes",
+        "in": "path",
+        "type": "string",
+        "required": "true",
+        "default": "정장"
+        },
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "NeedStyler": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Need Styler Information",
+        "schema": {
+            "$ref": '#/definitions/NeedStyler', 
+            },
+        "examples": {
+            "name" : "김엘지"
+        }
+        }
+    }
+    }
     
