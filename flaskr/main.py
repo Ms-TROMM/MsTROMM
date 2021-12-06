@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, todayRecom
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -670,7 +670,7 @@ def add_csv(userid):
 
 
 ##### 오늘의 추천 
-specs_dict = todayRecom().specs_dict
+specs_dict = TodayRecom().specs_dict
 @app.route('/recommend/today/<city>/<userid>', methods = ['GET'])
 @swag_from(specs_dict)
 def recommendToday(city, userid):
