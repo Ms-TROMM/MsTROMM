@@ -10,3 +10,6 @@
 ----------
 ## ✨ Details
 https://dot-nasturtium-ee3.notion.site/Ms-TROMM-e65d5d40ac7044b797a5c9955d5e4b8d
+
+----------
+swagger: http://127.0.0.1:5000/apidocs/
