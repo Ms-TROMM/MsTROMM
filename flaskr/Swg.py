@@ -3,7 +3,6 @@ from flask import Flask, jsonify
 from flasgger import Swagger
 
 
-### GET ###
 class Status:
     specs_dict = {
     "parameters" : [
@@ -428,7 +427,6 @@ class TodayRecom:
     }
 
 
-### POST ###
 class AddPrefer:
     specs_dict = {
     "parameters": [
@@ -619,3 +617,6 @@ class AddCSV:
         }
     }
     }
+
+
+    
