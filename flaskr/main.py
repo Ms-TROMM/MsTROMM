@@ -7,7 +7,7 @@ import os.path
 import connexion
 import json
 import datetime
-from datetime import datetime
+# from datetime import datetime
 import openpyxl
 import pandas as pd
 import numpy as np
@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status
+from flaskr.Swg import Standard, Status, HomeInfo
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -244,7 +244,9 @@ class HomeSchema(Schema):
 
 
 ## Load Home info
+specs_dict = HomeInfo().specs_dict
 @app.route('/home/<userid>/<city>',methods = ['GET'])   
+@swag_from(specs_dict)
 def get_homeinfo(userid,city):
     t = ['월','화','수','목','금','토','일']
     temp = getWeather(city)

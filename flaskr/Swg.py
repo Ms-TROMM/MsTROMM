@@ -76,3 +76,94 @@ class Standard:
         }
     }
     }
+
+
+class HomeInfo:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "HomeInfo",
+        "in": "path",
+        "type": ["integer","string"],
+        "required": "true",
+        "default": "Nothing"
+        }
+    ],
+    "definitions" : {
+        "HomeInfo": {
+        "type": "object",
+        "properties": {
+            "dehumification_connect": {
+                "type": "integer",
+            },
+            "dry_connection": {
+                "type": "integer",
+            },
+            "indoor_humidity": {
+                "type": "integer",
+            },
+            "indoor_temp": {
+                "type": "integer",
+            },
+            "max_temp": {
+                "type": "integer",
+            },
+            "min_temp": {
+                "type": "integer",
+            },
+            "mirror_connection": {
+                "type": "integer",
+            },
+            "now_mode": {
+                "type": "string",
+            },
+            "now_temp": {
+                "type": "integer",
+            },
+            "styler_connection": {
+                "type": "integer",
+            },
+            "styler_water": {
+                "type": "integer",
+            },
+            "todya_date": {
+                "type": "string",
+            },
+            "today_week": {
+                "type": "string",
+            },
+            "userid": {
+                "type": "integer",
+            },
+            "username": {
+                "type": "string",
+            },
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Home Information",
+        "schema": {
+            "$ref": '#/definitions/HomeInfo', 
+            },
+        "examples": {
+            "dehumification_connect" : 0,
+            "dry_connect" : 0,
+            "indoor_humidity" : 60,
+            "indoor_temp" : 22,
+            "max_temp" : 10,
+            "min_temp" : 8,
+            "mirror_connection" : 0,
+            "now_mode" : "리프레쉬",
+            "now_temp" : 10,
+            "styler_connection" : 1,
+            "styler_water" : 100,
+            "today_date" : "06",
+            "today_week" : "월",
+            "userid" : 1,
+            "username" : "김엘지"
+        }
+        }
+    }
+    }
