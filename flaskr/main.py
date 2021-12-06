@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -408,7 +408,9 @@ def check_state(userid):
 
 
 ### 스타일러 모드 변경(업데이트)
+specs_dict = ControlStyler().specs_dict
 @app.route('/state/stylers/<userid>',methods = ['PATCH'])
+@swag_from(specs_dict)
 def control_styler(userid):
     mode = request.get_json()["mode"]
     new_styler = Styler.query.filter(Styler.id ==1).first()
@@ -639,7 +641,9 @@ def control_csv(clothe, userid):
     
     
 ### 유저를 통해 학습하는 func  
+specs_dict = AddCSV().specs_dict
 @app.route('/clothe/schedule/<userid>', methods = ['POST'])
+@swag_from(specs_dict)
 def add_csv(userid):
     data = request.get_json()
     

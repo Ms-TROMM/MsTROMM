@@ -474,7 +474,7 @@ class AddPrefer:
         }
         },
     },
-    "requests": {
+    "responses": {
     "200": {
         "description": "Show Add Prefer",
         "schema": {
@@ -529,7 +529,7 @@ class AddClothes:
         }
         },
     },
-    "requests": {
+    "responses": {
     "200": {
         "description": "Show Add Clothes",
         "schema": {
@@ -547,3 +547,75 @@ class AddClothes:
     }
 
 
+class ControlStyler:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "ControlStyler": {
+        "type": "object",
+        "properties": {
+            "mode": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Control Styler",
+        "schema": {
+            "$ref": '#/definitions/ControlStyler', 
+            },
+        "examples": {
+            "mode" : "리프레쉬"
+        }
+        }
+    }
+    }
+
+
+class AddCSV:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "AddCSV": {
+        "type": "object",
+        "properties": {
+            "schedule": {
+                "type": "string",
+            },
+            "clothes": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Add CSV",
+        "schema": {
+            "$ref": '#/definitions/AddCSV', 
+            },
+        "examples": {
+            "schedule" : "LG전자면접",
+            "clothes" : "정장"
+        }
+        }
+    }
+    }
