@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard
+from flaskr.Swg import Standard, Status
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -156,7 +156,9 @@ class weatherSchema(Schema):
     daily = fields.Integer()
 
 
+specs_dict = Status().specs_dict
 @app.route('/status/<device>', methods=['GET'])
+@swag_from(specs_dict)
 def status(device):
     new_styler = Styler.query.filter(Styler.id ==1).first()
     new_mirror = Mirror.query.filter(Mirror.id ==1).first()

@@ -2,6 +2,46 @@ from flasgger import swag_from
 from flask import Flask, jsonify
 from flasgger import Swagger
 
+
+class Status:
+    specs_dict = {
+    "parameters" : [
+        {
+        "name" : "device",
+        "in" : "path",
+        "type" : "string",
+        "required" : "true",
+        "default" : "device not found"
+        }
+    ],
+    "definitions" : {
+        "DeviceStatus" : {
+        "type": "object",
+        "properties" : {
+            "connection": {
+                "type" : "integer",
+            },
+            "id":{
+                "type" : "integer",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show device status",
+        "schema": {
+            "$ref": '#/definitions/DeviceStatus', 
+            },
+        "examples": {
+            "connection" : 0,
+            "id" : 1
+        }
+        }
+    }
+    }
+    
+
 class Standard:
     specs_dict = {
     "parameters": [
@@ -13,7 +53,7 @@ class Standard:
         "default": 1
         }
     ],
-    "definitions": {
+    "definitions" : {
         "Username": {
         "type": "object",
         "properties": {
