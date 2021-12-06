@@ -711,3 +711,72 @@ class NeedStyler:
     }
     }
     
+
+class Water:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "Water": {
+        "type": "object",
+        "properties": {
+            "description": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show water percentage of styler",
+        "schema": {
+            "$ref": '#/definitions/Water', 
+            },
+        "examples": {
+            "description" : "물이 부족합니다! 물을 채워주세요!"
+        }
+        }
+    }
+    }
+
+
+class ScheduleAlert:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "ScheduleAlert": {
+        "type": "object",
+        "properties": {
+            "description": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Alert today schedule",
+        "schema": {
+            "$ref": '#/definitions/ScheduleAlert', 
+            },
+        "examples": {
+            "description" : "오늘은 LG전자 면접이 있습니다."
+        }
+        }
+    }
+    }

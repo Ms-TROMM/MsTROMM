@@ -19,7 +19,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler, Water
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -289,9 +289,11 @@ def alert(userid):
     return '수정중'
 
 
-@app.route('/styler/water/<device>',methods = ['GET'])  
+specs_dict = Water().specs_dict
+@app.route('/styler/water/<userid>',methods = ['GET'])  
+@swag_from(specs_dict)
 def water(userid):
-    waterState = 100 # Styler 테이블의 water_percentage 애트리뷰트 값 받아오기
+    waterState = Styler.query.filter(Styler.id==userid).first().water_percentage
     if waterState >= 100:
         des = '물통에 물이 너무 많아서 스타일러 가동이 중단되었습니다. 스타일러 물통을 확인해주세요!'
         alert = StylerAlert(user_id = userid, title = "스타일러 상태", description = des)
@@ -301,10 +303,12 @@ def water(userid):
         alert = StylerAlert(user_id = userid, title = "스타일러 상태", description = des)
         db.session.commit
 
+    return jsonify(des)
+
 
 ## 테스트 필요
 @app.route('/schedule/<userid>',methods = ['GET'])  
-def schedulealert(userid):
+def scheduleAlert(userid):
     now = datetime.datetime.today().strftime('%y-%m-%d')
     cal = calendar()
     cal = json.loads(cal)
@@ -314,7 +318,7 @@ def schedulealert(userid):
     for i in range(0,len(cal_li)):
         if cal_li[i]['start'] == now:
             todo = cal_li[i]['summary']
-            des = "오늘의 일정은 " + todo + "입니다."
+            des = "오늘은" + todo + "일정이 있습니다."
     alert = StylerAlert(user_id = userid, title = "일정 알림", description = des)
     db.session.commit()
 
