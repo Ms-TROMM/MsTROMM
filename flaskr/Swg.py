@@ -11,7 +11,7 @@ class Status:
         "in" : "path",
         "type" : "string",
         "required" : "true",
-        "default" : "device not found"
+        "default" : "styler"
         }
     ],
     "definitions" : {
@@ -82,11 +82,18 @@ class HomeInfo:
     specs_dict = {
     "parameters": [
         {
-        "name": "HomeInfo",
+        "name": "userid",
         "in": "path",
-        "type": ["integer","string"],
+        "type": "integer",
         "required": "true",
-        "default": "Nothing"
+        "default": 1
+        },
+        {
+        "name": "city",
+        "in": "path",
+        "type": "string",
+        "required": "true",
+        "default": "Seoul"
         }
     ],
     "definitions" : {
@@ -172,11 +179,11 @@ class ControlRecom:
     specs_dict = {
     "parameters": [
         {
-        "name": "ControlRecom",
+        "name": "userid",
         "in": "path",
-        "type": ["integer","string"],
+        "type": "integer",
         "required": "true",
-        "default": "Nothing"
+        "default": "1"
         }
     ],
     "definitions" : {
@@ -205,7 +212,7 @@ class ControlRecom:
     "200": {
         "description": "Show Control Recommendation",
         "schema": {
-            "$ref": '#/definitions/ConrolRecom', 
+            "$ref": '#/definitions/ControlRecom', 
             },
         "examples": {
             "course" : ["고급의류 코스", "섬세건조 코스", "스팀살균 코스"],
@@ -223,11 +230,11 @@ class CheckStylerState:
     specs_dict = {
     "parameters": [
         {
-        "name": "CheckStylerState",
+        "name": "userid",
         "in": "path",
         "type": "integer",
         "required": "true",
-        "default": "Nothing"
+        "default": 1
         }
     ],
     "definitions" : {
@@ -272,6 +279,96 @@ class CheckStylerState:
             "reserv" : 0,
             "styler_connection" : 1,
             "turn_on" : 0
+        }
+        }
+    }
+    }
+
+## 수정필요
+class Closet:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "Closet": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "integer",
+            },
+            "is_insider_styler": {
+                "type": "integer",
+            },
+            "name": {
+                "type": "string",
+            },
+            "nee_styler": {
+                "type": "integer",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show closet",
+        "schema": {
+            "$ref": '#/definitions/Closet', 
+            },
+        "examples": {
+            "id" : 1,
+            "is_inside_styler" : 1,
+            "name" : "정장1",
+            "need_styler" : 0
+        }
+        }
+    }
+    }
+
+
+class Weather:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "city",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": "Seoul"
+        }
+    ],
+    "definitions" : {
+        "Weather": {
+        "type": "object",
+        "properties": {
+            "daily": {
+                "type": "integer",
+            },
+            "high_temp": {
+                "type": "integer",
+            },
+            "low_temp": {
+                "type": "integer",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Weather Information",
+        "schema": {
+            "$ref": '#/definitions/Weather', 
+            },
+        "examples": {
+            "daily" : 0,
+            "high_temp" : 9,
+            "low_temp" : 8
         }
         }
     }

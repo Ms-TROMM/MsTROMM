@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -514,7 +514,9 @@ def need_styler(clothes,userid):
 
 
 ## 내 옷장 조회
+specs_dict = Closet().specs_dict
 @app.route('/users/clothes/<userid>', methods=['GET'])
+@swag_from(specs_dict)
 def check_closet(userid):
     closet = Clothes.query.filter(Clothes.user_id == userid).all()
     dict_li = []
@@ -544,8 +546,9 @@ def add_clothes(userid):
     """
 
 
-
+specs_dict = Weather().specs_dict
 @app.route('/weather/<city>', methods=['GET'])
+@swag_from(specs_dict)
 def weatherinfo(city):
     schema = weatherSchema()
     weather = getWeather(city)
