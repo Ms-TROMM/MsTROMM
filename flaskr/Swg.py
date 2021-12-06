@@ -217,3 +217,62 @@ class ControlRecom:
         }
     }
     }
+
+
+class CheckStylerState:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "CheckStylerState",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": "Nothing"
+        }
+    ],
+    "definitions" : {
+        "CheckStylerState": {
+        "type": "object",
+        "properties": {
+            "dry": {
+                "type": "integer",
+            },
+            "mirror_connection": {
+                "type": "integer",
+            },
+            "ready": {
+                "type": "integer",
+            },
+            "refresh": {
+                "type": "integer",
+            },
+            "reserv": {
+                "type": "integer",
+            },
+            "styler_connection": {
+                "type": "integer",
+            },
+            "turn_on": {
+                "type": "integer",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Styler State",
+        "schema": {
+            "$ref": '#/definitions/CheckStylerState', 
+            },
+        "examples": {
+            "dry" : 0,
+            "mirror_connection" : 0,
+            "ready" : 0,
+            "refresh" : 0,
+            "reserv" : 0,
+            "styler_connection" : 1,
+            "turn_on" : 0
+        }
+        }
+    }
+    }

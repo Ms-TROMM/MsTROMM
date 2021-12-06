@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -378,7 +378,9 @@ def control_recom(userid):
 ###### Styler Part
 
 ### 스타일러 상태 조회
+specs_dict = CheckStylerState().specs_dict
 @app.route('/state/stylers/<userid>',methods = ['GET'])
+@swag_from(specs_dict)
 def check_state(userid):
     new_control = Control.query.filter(Control.id==userid).first()
     
