@@ -280,19 +280,16 @@ def alert(userid):
     ### "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
     ### "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
 
-
     ### "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
-    ### "스타일러 상태" 알림(물상태)
-    
-     
-    
+    ### "스타일러 상태" 알림(물상태) (/styler/water/<userid>에 구현)
+       
     ### "일정" 알림 (/schedule/<userid> 에 구현)
     
     
     return '수정중'
 
 
-@app.route('/styler/water/<userid>',methods = ['GET'])  
+@app.route('/styler/water/<device>',methods = ['GET'])  
 def water(userid):
     waterState = 100 # Styler 테이블의 water_percentage 애트리뷰트 값 받아오기
     if waterState >= 100:
