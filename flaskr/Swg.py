@@ -167,3 +167,53 @@ class HomeInfo:
         }
     }
     }
+
+class ControlRecom:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "ControlRecom",
+        "in": "path",
+        "type": ["integer","string"],
+        "required": "true",
+        "default": "Nothing"
+        }
+    ],
+    "definitions" : {
+        "ControlRecom": {
+        "type": "object",
+        "properties": {
+            "course": {
+                "type": "list",
+            },
+            "indoor_temp": {
+                "type": "string",
+            },
+            "is_inside_styler": {
+                "type": "string",
+            },
+            "texture": {
+                "type": "string",
+            },
+            "useid": {
+                "type": "integer",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "Show Control Recommendation",
+        "schema": {
+            "$ref": '#/definitions/ConrolRecom', 
+            },
+        "examples": {
+            "course" : ["고급의류 코스", "섬세건조 코스", "스팀살균 코스"],
+            "indoor_temp" : 22,
+            "is_inside_styler" : "정장1",
+            "texture" : "울",
+            "userid" : 1
+        }
+        }
+    }
+    }

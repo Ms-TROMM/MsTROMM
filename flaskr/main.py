@@ -20,7 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -344,7 +344,9 @@ def recommand_today(userid):
 
 
 ##### 제어추천
+specs_dict = ControlRecom().specs_dict
 @app.route('/recommands/control/<userid>', methods = ['GET']) 
+@swag_from(specs_dict)
 def control_recom(userid):
     
     ### recommand_data_set
