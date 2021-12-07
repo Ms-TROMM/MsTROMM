@@ -678,7 +678,7 @@ class NeedStyler:
         "in": "path",
         "type": "string",
         "required": "true",
-        "default": "정장"
+        "default": "티셔츠"
         },
         {
         "name": "userid",
