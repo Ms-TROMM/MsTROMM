@@ -93,7 +93,7 @@ ENV/
 
 # token
 credentials.json
-# token.json
+token.json
 
 # keys
 keys.csv
