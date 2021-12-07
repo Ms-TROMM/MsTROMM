@@ -503,52 +503,54 @@ def need_styler(clothes,userid):
     
     # 데이터 셋을 통해 학습
     standard = control_csv(clothes,userid)
-    print(sch_li)
-    print(sch_dict)
-    print(standard)
-    event_date = sch_dict[standard[0]]['date']
-    new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
-    new_timedel = np.timedelta64(new_timedel,'ns')
-    new_day = new_timedel.astype('timedelta64[D]')
-    new_day = new_day.astype(int)
-    df = pd.read_csv('flaskr/dataset.csv')
-    df = pd.DataFrame(df) 
-    for i in range(0,min(len(df[clothes].tolist()),len(sch_li))):
-        if (sch_li[i] in df[clothes].tolist()) == True :
-            testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
-            break
-        else :
-            testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
-        
-    if testing == 1:
-        tm = 2*day + np.exp2(6-new_day) # 기준 함수
-        ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
-        if tm >= 8:
-            need_styler_set = 0 # 매우 필요
-        
-        elif tm >= 6 and tm < 8:
-            need_styler_set = 1 # 필요
-        
-        else :
-            need_styler_set = 2 # 괜찮음
+    print(type(standard))
+    if len(standard) != 0:
+        event_date = sch_dict[standard[0]]['date']   
+        new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
+        new_timedel = np.timedelta64(new_timedel,'ns')
+        new_day = new_timedel.astype('timedelta64[D]')
+        new_day = new_day.astype(int)
+        df = pd.read_csv('flaskr/dataset.csv')
+        df = pd.DataFrame(df) 
+        for i in range(0,min(len(df[clothes].tolist()),len(sch_li))):
+            if (sch_li[i] in df[clothes].tolist()) == True :
+                testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
+                break
+            else :
+                testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
+            
+        if testing == 1:
+            tm = 2*day + np.exp2(6-new_day) # 기준 함수
+            ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
+            if tm >= 8:
+                need_styler_set = 0 # 매우 필요
+            
+            elif tm >= 6 and tm < 8:
+                need_styler_set = 1 # 필요
+            
+            else :
+                need_styler_set = 2 # 괜찮음
 
-    elif testing == 0:
-        tm = 2*day + np.exp2(6-new_day) # 기준 함수 
-        if tm >= 8:
-            need_styler_set = 0 # 매우 필요
-        
-        elif tm >= 6 and tm < 8:
-            need_styler_set = 1 # 필요
-        
-        else :
-            need_styler_set = 2 # 괜찮음
+        elif testing == 0:
+            tm = 2*day + np.exp2(6-new_day) # 기준 함수 
+            if tm >= 8:
+                need_styler_set = 0 # 매우 필요
+            
+            elif tm >= 6 and tm < 8:
+                need_styler_set = 1 # 필요
+            
+            else :
+                need_styler_set = 2 # 괜찮음
 
 
-    # need_styler update
-    new_clothes.need_styler = need_styler_set
-    db.session.commit()
-    result = schema.dump(new_clothes)
-    return result
+        # need_styler update
+        new_clothes.need_styler = need_styler_set
+        db.session.commit()
+        result = schema.dump(new_clothes)
+        return result
+    else:
+        result = schema.dump(new_clothes)
+        return result
 
 
 ## 내 옷장 조회
