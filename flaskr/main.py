@@ -278,13 +278,12 @@ specs_dict = Alert().specs_dict
 @app.route('/alerts/<userid>',methods = ['GET'])  
 @swag_from(specs_dict)
 def alert(userid):
-    ### "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
-    ### "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
+    # "오늘의 추천" 알림 (/recommend/today/<city>/<userid> 에 구현)
+    # "제어 추천" 알림 (/recommands/control/<userid> 에 구현)
+    # "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
+    # "스타일러 상태" 알림(물상태) (/styler/water/<userid>에 구현)
+    # "일정" 알림 (/schedule/<userid> 에 구현)
 
-    ### "스타일러 상태" 알림(스타일러 가동) (/state/stylers/<userid> 에 구현)
-    ### "스타일러 상태" 알림(물상태) (/styler/water/<userid>에 구현)
-       
-    ### "일정" 알림 (/schedule/<userid> 에 구현)
     values = StylerAlert.query.filter(StylerAlert.user_id==userid).all()
     dict_li =[]
     for i in range(0,len(values)):
