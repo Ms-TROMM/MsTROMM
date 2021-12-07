@@ -531,7 +531,7 @@ def check_closet(userid):
     closet = Clothes.query.filter(Clothes.user_id == userid).all()
     dict_li = []
     for i in range(0,len(closet)):
-        dict_li.append({"id":closet[i].id, "name":closet[i].name, "need_styler":closet[i].need_styler, "is_inside_styler":closet[i].is_inside_styler})
+        dict_li.append({"id":closet[i].id, "name":closet[i].name, "need_styler":closet[i].need_styler, "is_inside_styler":closet[i].is_inside_styler, "created_at":closet[i].created_at, "stylered_at":closet[i].stylered_at, "color:":closet[i].color,"texture":closet[i].texture,"clothe_type":closet[i].clothes_type.name,"sub_type":closet[i].sub_type})
     return jsonify(dict_li)
 
 

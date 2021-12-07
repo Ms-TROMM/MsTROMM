@@ -313,22 +313,46 @@ class Closet:
             },
             "need_styler": {
                 "type": "integer",
+            },
+            "clothe_type":{
+                "type":"string"
+            },
+            "color":{
+                "type":"integer"
+            },
+            "created_at":{
+                "type":"datetime"
+            },
+            "stylered_at":{
+                "type":"datetime"
+            },
+            "sub_type":{
+                "type":"integer"
+            },
+            "texture":{
+                "type":"string"
             }
         }
         },
     },
     "responses": {
     "200": {
-        "description": "내 옷장 관련",
+        "description": "내 옷장 관련, 내 옷장에 모든 옷들 상태를 리스트로 반환[{}]",
         "schema": {
             "$ref": '#/definitions/Closet', 
             },
         "examples": {
-            "id" : 1,
-            "is_inside_styler" : 1,
-            "name" : "정장1",
-            "need_styler" : 0
-        }
+        "clothe_type": "top",
+        "color:": 212121,
+        "created_at": "Wed, 10 Nov 2021 13:44:33 GMT",
+        "id": 3,
+        "is_inside_styler": 0,
+        "name": "티셔츠",
+        "need_styler": 0,
+        "stylered_at": "Sat, 20 Nov 2021 13:44:33 GMT",
+        "sub_type": 1,
+        "texture": "soft"
+    }
         }
     }
     }
