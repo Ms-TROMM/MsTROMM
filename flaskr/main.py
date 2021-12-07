@@ -297,7 +297,10 @@ def alert(userid):
     dict_li =[]
     for i in range(0,len(values)):
         dict_li.append({"title":values[i].title, "description":values[i].description,"created_at":values[i].created_at})
-    return jsonify(dict_li)
+    if len(dict_li)==0:
+        return jsonify("알림 내역이 없습니다! 곧 좋은 추천 알려드릴게요!")
+    else:
+        return jsonify(dict_li)
 
 
 specs_dict = Water().specs_dict
