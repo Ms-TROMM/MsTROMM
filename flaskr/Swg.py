@@ -150,7 +150,7 @@ class HomeInfo:
     },
     "responses": {
     "200": {
-        "description": "Show Home Information",
+        "description": "홈-1~4 관련",
         "schema": {
             "$ref": '#/definitions/HomeInfo', 
             },
@@ -211,7 +211,7 @@ class ControlRecom:
     },
     "responses": {
     "200": {
-        "description": "Show Control Recommendation",
+        "description": "추천(제어 추천) 관련",
         "schema": {
             "$ref": '#/definitions/ControlRecom', 
             },
@@ -268,7 +268,7 @@ class CheckStylerState:
     },
     "responses": {
     "200": {
-        "description": "Show Styler State",
+        "description": "스타일러 ~ 스타일러-3 관련",
         "schema": {
             "$ref": '#/definitions/CheckStylerState', 
             },
@@ -319,7 +319,7 @@ class Closet:
     },
     "responses": {
     "200": {
-        "description": "Show closet",
+        "description": "내 옷장 관련",
         "schema": {
             "$ref": '#/definitions/Closet', 
             },
@@ -413,7 +413,7 @@ class TodayRecom:
     },
     "responses": {
     "200": {
-        "description": "Show Today Recommendation",
+        "description": "추천(오늘의 추천)에서 옷 관련(ex. 두꺼운 가디건, 활동성..., 민트향)",
         "schema": {
             "$ref": '#/definitions/TodayRecom', 
             },
@@ -474,7 +474,7 @@ class AddPrefer:
     },
     "responses": {
     "200": {
-        "description": "Show User Preference",
+        "description": "설문지-1~6관련",
         "schema": {
             "$ref": '#/definitions/AddPrefer', 
             },
@@ -529,7 +529,7 @@ class AddClothes:
     },
     "responses": {
     "200": {
-        "description": "Show New Clothes Information",
+        "description": "새 옷 등록하기 관련",
         "schema": {
             "$ref": '#/definitions/AddClothes', 
             },
@@ -568,7 +568,7 @@ class ControlStyler:
     },
     "responses": {
     "200": {
-        "description": "Show Styler Control Information",
+        "description": "스타일러에서 버튼(ex. 살균~섬세건조) 눌렀을 때, mode (상태) 변경",
         "schema": {
             "$ref": '#/definitions/ControlStyler', 
             },
@@ -606,7 +606,7 @@ class AddCSV:
     },
     "responses": {
     "200": {
-        "description": "Match schedule and clothe",
+        "description": "학습 팝업 관련",
         "schema": {
             "$ref": '#/definitions/AddCSV', 
             },
@@ -654,7 +654,7 @@ class RecomToday:
     },
     "responses": {
     "200": {
-        "description": "Show Today Recommendation",
+        "description": "추천(오늘의 추천) 관련",
         "schema": {
             "$ref": '#/definitions/RecomToday', 
             },
@@ -700,7 +700,7 @@ class NeedStyler:
     },
     "responses": {
     "200": {
-        "description": "Show Need Styler Information",
+        "description": "내옷장 - 스타일러 필요도 관련",
         "schema": {
             "$ref": '#/definitions/NeedStyler', 
             },
