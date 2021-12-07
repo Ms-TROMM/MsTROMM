@@ -112,42 +112,8 @@ def getWeather(city):
 
 ## google calendar API
 def calendar():
-    # SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-    # creds = None
-    
-    # if os.path.exists('token.json'):
-    #     creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # # If there are no (valid) credentials available, let the user log in.
-    # if not creds or not creds.valid:
-    #     if creds and creds.expired and creds.refresh_token:
-    #         creds.refresh(Request())
-    #     else:
-    #         flow = InstalledAppFlow.from_client_secrets_file(
-    #             'credentials.json', SCOPES)
-    #         creds = flow.run_local_server(port=0)
-    #     # Save the credentials for the next run
-    #     with open('token.json', 'w') as token:
-    #         token.write(creds.to_json())
-
-    # service = build('calendar', 'v3', credentials=creds)
-
-    # # Call the Calendar API
-    # calendar_id = environ.get('googleCalId')
-    # time_min = (datetime.date.today() + datetime.timedelta(days=-100)).isoformat() + 'T00:00:00+09:00'
-    # time_max = (datetime.date.today() + datetime.timedelta(days=100)).isoformat() + 'T23:59:59+09:00'
-    # max_results = 5
-    # is_single_events = True
-    # orderby = 'startTime'
-    # events_result = service.events().list(calendarId = calendar_id,
-    #                                     timeMin = time_min,
-    #                                     timeMax = time_max,
-    #                                     maxResults = max_results,
-    #                                     singleEvents = is_single_events,
-    #                                     orderBy = orderby
-    #                                     ).execute()
-    # # return events_result
     api_url = "https://www.googleapis.com/calendar/v3/calendars/c_gk3d37vfpjea22cdnv7f92nkdk@group.calendar.google.com/events?orderBy=startTime&singleEvents=true&timeMax="
-    service_key = "AIzaSyCbfMxqc1O4E2xtbUSntpsy9IwF3nTCTGA"
+    service_key = environ.get('googleapi')
     # API 요청시 필요한 인수값 정의
     time_min = (datetime.date.today() + datetime.timedelta(days=-100)).isoformat() + "T00:00:00Z"
     time_max = (datetime.date.today() + datetime.timedelta(days=100)).isoformat() + "T23:59:59Z"
@@ -507,52 +473,54 @@ def need_styler(clothes,userid):
     
     # 데이터 셋을 통해 학습
     standard = control_csv(clothes,userid)
-    print(sch_li)
-    print(sch_dict)
-    print(standard)
-    event_date = sch_dict[standard[0]]['date']
-    new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
-    new_timedel = np.timedelta64(new_timedel,'ns')
-    new_day = new_timedel.astype('timedelta64[D]')
-    new_day = new_day.astype(int)
-    df = pd.read_csv('flaskr/dataset.csv')
-    df = pd.DataFrame(df) 
-    for i in range(0,min(len(df[clothes].tolist()),len(sch_li))):
-        if (sch_li[i] in df[clothes].tolist()) == True :
-            testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
-            break
-        else :
-            testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
-        
-    if testing == 1:
-        tm = 2*day + np.exp2(6-new_day) # 기준 함수
-        ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
-        if tm >= 8:
-            need_styler_set = 0 # 매우 필요
-        
-        elif tm >= 6 and tm < 8:
-            need_styler_set = 1 # 필요
-        
-        else :
-            need_styler_set = 2 # 괜찮음
+    print(type(standard))
+    if len(standard) != 0:
+        event_date = sch_dict[standard[0]]['date']   
+        new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
+        new_timedel = np.timedelta64(new_timedel,'ns')
+        new_day = new_timedel.astype('timedelta64[D]')
+        new_day = new_day.astype(int)
+        df = pd.read_csv('flaskr/dataset.csv')
+        df = pd.DataFrame(df) 
+        for i in range(0,min(len(df[clothes].tolist()),len(sch_li))):
+            if (sch_li[i] in df[clothes].tolist()) == True :
+                testing = 1 # 캘린더에 요청한 옷에 관한 스케쥴이 존재
+                break
+            else :
+                testing = 0 # 캘린더에 요청한 옷에 관한 스케쥴 X
+            
+        if testing == 1:
+            tm = 2*day + np.exp2(6-new_day) # 기준 함수
+            ### need_styler_set : 0 = 매우필요 1 = 필요 2 = 괜찮음
+            if tm >= 8:
+                need_styler_set = 0 # 매우 필요
+            
+            elif tm >= 6 and tm < 8:
+                need_styler_set = 1 # 필요
+            
+            else :
+                need_styler_set = 2 # 괜찮음
 
-    elif testing == 0:
-        tm = 2*day + np.exp2(6-new_day) # 기준 함수 
-        if tm >= 8:
-            need_styler_set = 0 # 매우 필요
-        
-        elif tm >= 6 and tm < 8:
-            need_styler_set = 1 # 필요
-        
-        else :
-            need_styler_set = 2 # 괜찮음
+        elif testing == 0:
+            tm = 2*day + np.exp2(6-new_day) # 기준 함수 
+            if tm >= 8:
+                need_styler_set = 0 # 매우 필요
+            
+            elif tm >= 6 and tm < 8:
+                need_styler_set = 1 # 필요
+            
+            else :
+                need_styler_set = 2 # 괜찮음
 
 
-    # need_styler update
-    new_clothes.need_styler = need_styler_set
-    db.session.commit()
-    result = schema.dump(new_clothes)
-    return result
+        # need_styler update
+        new_clothes.need_styler = need_styler_set
+        db.session.commit()
+        result = schema.dump(new_clothes)
+        return result
+    else:
+        result = schema.dump(new_clothes)
+        return result
 
 
 ## 내 옷장 조회
