@@ -305,13 +305,13 @@ class Closet:
             "id": {
                 "type": "integer",
             },
-            "is_insider_styler": {
+            "is_inside_styler": {
                 "type": "integer",
             },
             "name": {
                 "type": "string",
             },
-            "nee_styler": {
+            "need_styler": {
                 "type": "integer",
             }
         }
