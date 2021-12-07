@@ -811,7 +811,7 @@ class Alert:
     },
     "responses": {
     "200": {
-        "description": "알림-1, 알림-2, 알림-3 관련",
+        "description": "알림-푸시알림설정전, 알림-알림없을시, 알림-1, 알림-2, 알림-3 관련",
         "schema": {
             "$ref": '#/definitions/Alert', 
             },

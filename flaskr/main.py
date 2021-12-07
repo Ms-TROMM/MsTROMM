@@ -293,6 +293,10 @@ def alert(userid):
     # "스타일러 상태" 알림(물상태) (/styler/water/<userid>에 구현)
     # "일정" 알림 (/schedule/<userid> 에 구현)
 
+    push = User.query.filter(User.id==userid).first().push
+    if push == 0:
+        return jsonify("Ms.TROMM의 맞춤형 추천 내역을 보시려면 푸시 알람을 켜주셔야 합니다!")
+
     values = StylerAlert.query.filter(StylerAlert.user_id==userid).all()
     dict_li =[]
     for i in range(0,len(values)):
