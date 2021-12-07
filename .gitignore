@@ -92,7 +92,7 @@ ENV/
 .idea/
 
 # token
-# credentials.json
+credentials.json
 # token.json
 
 # keys
