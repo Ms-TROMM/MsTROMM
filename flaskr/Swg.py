@@ -735,7 +735,7 @@ class Water:
     },
     "responses": {
     "200": {
-        "description": "Show water percentage of styler",
+        "description": "제어추천팝업, 제어추천팝업1 관련",
         "schema": {
             "$ref": '#/definitions/Water', 
             },
@@ -770,7 +770,7 @@ class ScheduleAlert:
     },
     "responses": {
     "200": {
-        "description": "Alert today schedule",
+        "description": "일정추천팝업",
         "schema": {
             "$ref": '#/definitions/ScheduleAlert', 
             },
@@ -811,7 +811,7 @@ class Alert:
     },
     "responses": {
     "200": {
-        "description": "Show past alerts",
+        "description": "알림-1, 알림-2, 알림-3 관련",
         "schema": {
             "$ref": '#/definitions/Alert', 
             },
