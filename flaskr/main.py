@@ -500,6 +500,9 @@ def need_styler(clothes,userid):
     
     # 데이터 셋을 통해 학습
     standard = control_csv(clothes,userid)
+    print(sch_li)
+    print(sch_dict)
+    print(standard)
     event_date = sch_dict[standard[0]]['date']
     new_timedel =  datetime.date(int(event_date[0:4]),int(event_date[5:7]),int(event_date[8:10])) - datetime.date.today()
     new_timedel = np.timedelta64(new_timedel,'ns')
@@ -648,21 +651,18 @@ def control_csv(clothe, userid):
         sch_date.append(cal_li[i]['start'])
     
     dataf = data[clothe].dropna(how='any').tolist()
-    input_li = [i.replace(' ',' ') for i in dataf] 
     new_sch_li = [i.replace(' ',' ') for i in sch_li]
-    
-    for i in range(0,min(len(input_li),len(new_sch_li))):
-        if (new_sch_li[i] in input_li) == True:
+    for i in range(0,min(len(dataf),len(new_sch_li))):
+        if (new_sch_li[i] in dataf) == True:
             match_li.append(new_sch_li[i])
         else:
             to_update.append(new_sch_li[i])
-    
     
     new_sch_count = Schedule.query.filter_by(user_id=userid).first()
     ### DB 비어있는지 확인
     if type(new_sch_count) == type(None): 
         for i in range(0, len(to_update)):
-            new_schdule = Schedule(id = i+1, cont = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()                   
+            new_schdule = Schedule(id = i+1, cont = i+1, user_id=userid, title=to_update[i], description=to_update[i]).create()                          
     return match_li
         
     
