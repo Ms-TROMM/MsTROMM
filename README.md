@@ -1,4 +1,4 @@
-# 🖥️ Ms.TROMM
+## 🖥️ Ms.TROMM
 ### Wise Secretary Always Thinking about You: 
 #### Artificial Intelligence-based Recommendation Software using Styler and Smart Mirror
 ----------
@@ -10,3 +10,9 @@
 ----------
 ## ✨ Details
 https://dot-nasturtium-ee3.notion.site/Ms-TROMM-e65d5d40ac7044b797a5c9955d5e4b8d
+
+----------
+
+## 🖥️ Methodolgy
+#### Methodolgy about backend server
+----------
