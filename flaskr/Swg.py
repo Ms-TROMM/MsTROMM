@@ -860,7 +860,7 @@ class PostAlert:
         }
     ],
     "definitions" : {
-        "Alert": {
+        "PostAlert": {
         "type": "object",
         "properties": {
             "title": {
