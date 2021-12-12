@@ -33,13 +33,6 @@ from connexion.resolver import RestyResolver
 from flasgger import swag_from
 
 
-# connexion_app = connexion.App(__name__, specification_dir='./')
-
-# connexion_app.add_api('swagger.yml', resolver = RestyResolver('main'))
-
-# app = connexion_app.app
-# CORS(app)
-
 app = Flask(__name__)
 swagger = Swagger(app)
 
@@ -100,14 +93,6 @@ def getWeather(city):
     res = req.readline()
     # 받은 값 JSON 형태로 정제하여 반환
     items = json.loads(res)
-    # print("도시명 : %r" % items['name'])
-    # print("날씨 : %r" % items['weather'][0]['main'])
-    # print("날씨상세 : %r" % items['weather'][0]['description'])
-    # print("현재온도 : %r" % str(int(items['main']['temp'])-273.15))
-    # print("체감온도 : %r" % str(int(items['main']['feels_like'])-273.15))
-    # print("최저온도 : %r" % str(int(items['main']['temp_min'])-273.15))
-    # print("최고온도 : %r" % str(int(items['main']['temp_max'])-273.15))
-    # print("습도 : %r" % items['main']['humidity'])
     return items
 
 ## google calendar API
@@ -171,33 +156,6 @@ def add_prefer(userid):
     db.session.commit()
     result = schema.dump(new_prefer)
     return result
-
-    """
-    {
-"scentid_one":1,
-"scentid_two":2,
-"scentid_three":3,
-"fashion_one":"casual",
-"fashion_two":"hip",
-"fashion_three":"boxy",
-"color_one":292929,
-"color_two":292930,
-"color_three":292940
-}
-
-    {
-"scentid_one":"woody",
-"scentid_two":"citrus",
-"scentid_three":"green",
-"fashion_one":"relax",
-"fashion_two":"coat",
-"fashion_three":"clean",
-"color_one":"green",
-"color_two":"yellow",
-"color_three":"ivory"
-}
-
-    """
 
 
 
@@ -456,7 +414,6 @@ def control_styler(userid):
         return '스타일러 연결에 실패하였습니다.'
 
 #### 내옷장 Part  
-## 전체 조회 ?? 어쩌지 ?
 specs_dict = NeedStyler().specs_dict
 @app.route('/recommand/styler/<clothes>/<userid>',methods = ['GET'])
 @swag_from(specs_dict)
@@ -564,16 +521,6 @@ def add_clothes(userid):
     result = schema.dump(new_clothe_data)
     return result
 
-    """
-    {
-    "name":"정장1",
-    "category":"onepiece",
-    "sub_type": 3,
-    "color": 292929,
-    "texture":"울"
-}
-    """
-
 
 specs_dict = Weather().specs_dict
 @app.route('/weather/<city>', methods=['GET'])
@@ -667,27 +614,6 @@ specs_dict = AddCSV().specs_dict
 def add_csv(userid):
     data = request.get_json()
     
-    '''
-    ex.
-    {
-        "LG전자면접" : "정장",
-        "롯데월드" : "티셔츠"
-        
-        {"schdule" : "LG전자면접",
-        "clothe" : "티셔츠"}
-                
-                [
-        { 
-            "clothes" : "정장", 
-            "schedule" : "LG전자 면접"
-        }, 
-        { 
-            "clothes" : "양복", 
-            "schedule" : "회의"
-        }, 
-        ]
-    }
-    '''
     for i in range(0,len(data)):
         need_styler(data[i]['clothes'],userid)
     dataFrame = pd.read_csv('flaskr/dataset.csv')
