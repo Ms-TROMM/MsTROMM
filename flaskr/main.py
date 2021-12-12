@@ -693,10 +693,7 @@ def add_csv(userid):
     
     ### 학습 데이터 셋(csv) 업데이트를 위한 딕셔너리
     for i in range(0,len(data)):
-        # target_num = max(list(data_dict[list(data.values())[i]].keys()))+1
-        # target_num = max(list(data_dict[list(data[i]['clothes'].values())].keys()))+1
         target_num = max(list(data_dict[data[i]['clothes']].keys()))+1
-        # target = list(data.values())[i]
         target  = data[i]['clothes']
         data_dict[list(data[i].values())[i]].update({target_num:target}) 
     
