@@ -278,11 +278,14 @@ specs_dict = PostAlert().specs_dict
 @swag_from(specs_dict)
 def postAlert(userid):
 
-    # values = StylerAlert.query.filter(StylerAlert.user_id==userid).all().id
-
+    values = StylerAlert.query.all().id
+    val_len = len(values) + 1
+    
     re = request.get_json()
-    result = StylerAlert(userid=userid, title=re['title'], description=re['description'])
-    db.session.commit()
+    result = StylerAlert(id=val_len, user_id=userid, title=re['title'], description=re['description']).create()
+    # db.session.commit()
+
+    return 'Success!'
     
 
 specs_dict = Water().specs_dict
