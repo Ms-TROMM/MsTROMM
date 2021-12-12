@@ -847,3 +847,41 @@ class Alert:
         }
     }
     }
+
+class PostAlert:
+    specs_dict = {
+    "parameters": [
+        {
+        "name": "userid",
+        "in": "path",
+        "type": "integer",
+        "required": "true",
+        "default": 1
+        }
+    ],
+    "definitions" : {
+        "Alert": {
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string",
+            }
+        }
+        },
+    },
+    "responses": {
+    "200": {
+        "description": "알림-푸시알림설정전, 알림-알림없을시, 알림-1, 알림-2, 알림-3 관련",
+        "schema": {
+            "$ref": '#/definitions/PostAlert', 
+            },
+        "examples": {
+            "title" : "오늘의 알림",
+            "description" : "오늘은 LG전자 면접이 있습니다.",
+        }
+        }
+    }
+    }

@@ -19,7 +19,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, make_response
 from marshmallow import Schema, fields, pprint
 from http import HTTPStatus
-from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler, Water, ScheduleAlert, Alert
+from flaskr.Swg import Standard, Status, HomeInfo, ControlRecom, CheckStylerState, Closet, Weather, TodayRecom, AddPrefer, AddClothes, ControlStyler, AddCSV, RecomToday, NeedStyler, Water, ScheduleAlert, Alert, PostAlert
 from flaskr.settings import CLEARDB_DATABASE_URL
 from werkzeug.exceptions import HTTPException
 from googleapiclient.discovery import build
@@ -272,6 +272,18 @@ def alert(userid):
     else:
         return jsonify(dict_li)
 
+
+specs_dict = PostAlert().specs_dict
+@app.route('/alerts/<userid>',methods = ['POST'])  
+@swag_from(specs_dict)
+def postAlert(userid):
+
+    # values = StylerAlert.query.filter(StylerAlert.user_id==userid).all().id
+
+    re = request.get_json()
+    result = StylerAlert(userid=userid, title=re['title'], description=re['description'])
+    db.session.commit()
+    
 
 specs_dict = Water().specs_dict
 @app.route('/styler/water/<userid>',methods = ['GET'])  
