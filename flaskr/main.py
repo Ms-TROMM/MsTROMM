@@ -688,7 +688,8 @@ def add_csv(userid):
         ]
     }
     '''
-    
+    for i in range(0,len(data)):
+        need_styler(data[i]['clothes'],userid)
     dataFrame = pd.read_csv('flaskr/dataset.csv')
     dataFrame = pd.DataFrame(dataFrame)
     data_dict = dataFrame.to_dict()
